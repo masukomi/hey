@@ -9,6 +9,7 @@
 (require-extension sql-de-lite)
 (require-extension srfi-13)
 (require-extension srfi-1)
+(require-extension pathname-expand)
 ; (require-extension mdcd)
 (use loops)
 (use listicles)
@@ -71,9 +72,14 @@
 	; look for it in dropbox
 	; look for it in local storage location
 	; if you don't find it, create it
-
-	; (open-database "~/Dropbox/apps/hey/database/hey.db")
-	(open-database "/Users/masukomi/Dropbox/apps/hey/database/hey.db")
+	(let ((dropbox-path (pathname-expand "~/Dropbox/apps/hey/database/hey.db")))
+		; test if dropbox-path exists
+			; open it
+			(open-database dropbox-path)
+		; elsif local storage location exists
+			; open it
+		; else create it
+	)
 )
 
 (define (downcase-list items)
