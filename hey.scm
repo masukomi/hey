@@ -94,8 +94,12 @@
 (define (data)
 	(print "asked to provide data")
   )
+(define (list-events)
+	(print "asked to list events")
+  )
 (define (process-command command args)
 	(case command
+		('("list")  (list-events))
 		('("tag")   (tag (car args) (cdr args)))
 		('("retag") (retag (car args) (cdr args)))
 		('("delete")(delete-entry (car args)))
@@ -113,7 +117,7 @@
 ; (print (display downcased-args))
 ; (print (display first-arg))
 
-(define recognized-commands '("tag" "retag" "delete" "data"))
+(define recognized-commands '("tag" "retag" "delete" "data" "list"))
 
 (if (list-includes recognized-commands first-arg)
   (process-command first-arg (cdr downcased-args))
