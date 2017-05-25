@@ -170,15 +170,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; exec 
-(define downcased-args (downcase-list (argv)))
-(define first-arg (nth 1 downcased-args))
+(if (not (equal? 'nil (argv)))
+	(lambda()(
+		(define downcased-args (downcase-list (argv)))
+		(define first-arg (nth 1 downcased-args))
 
-; (print (display downcased-args))
-; (print (display first-arg))
+		; (print (display downcased-args))
+		; (print (display first-arg))
 
-(define recognized-commands '("tag" "retag" "delete" "data" "list"))
+		(define recognized-commands '("tag" "retag" "delete" "data" "list"))
 
-(if (list-includes recognized-commands first-arg)
-  (process-command first-arg (cdr downcased-args))
-  (create-entry (cdr downcased-args) (open-db))
-  )
+		(if (list-includes recognized-commands first-arg)
+  	  	  (process-command first-arg (cdr downcased-args))
+  	  	  (create-entry (cdr downcased-args) (open-db))
+  	  	  )
+  	))
+)
+
