@@ -5,7 +5,7 @@
 ; hey retag <id>
 ; hey delete <id>
 ; hey data
-(load "listicles.import.scm")
+(import listicles)
 (require-extension sql-de-lite)
 (require-extension srfi-13)
 (require-extension srfi-1)
