@@ -169,7 +169,8 @@
 	(let ((row-data '())
 		  (db (open-db)))
 		(do-list row (query fetch-rows (sql db 
-			"SELECT e.id, e.created_at FROM events e order by e.created_at asc;"))
+			"SELECT e.id, e.created_at FROM events e order by e.created_at desc;"))
+			; desc because the consing reverses the list. :/
 			(set! row-data (cons
 							 (get-event-display-data row db)
 							 row-data)))
