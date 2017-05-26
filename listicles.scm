@@ -5,6 +5,7 @@
    range
    split-by
    list-includes
+   flatten
   )
   (import chicken)
   (import scheme)
