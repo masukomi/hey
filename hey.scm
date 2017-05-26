@@ -5,7 +5,6 @@
 ; hey retag <id>
 ; hey delete <id>
 ; hey data
-(import listicles)
 (require-extension sql-de-lite)
 (require-extension srfi-13)
 (require-extension srfi-1)
@@ -14,6 +13,7 @@
 ; (require-extension mdcd)
 (use loops)
 (use listicles)
+(use fmt)
 ; SET UP FUNCTIONS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; CORE FUNCTIONALITY
@@ -155,7 +155,7 @@
 	)
   )
 (define (retag id args)
-	(sprintf "asked to retag ~A with ~A" id (display args))
+	(sprintf "asked to retag ~A with ~A" id args)
   )
 (define (delete-entry id)
 	(sprintf "asked to delete ~A" id )
@@ -163,6 +163,7 @@
 (define (data)
 	(print "asked to provide data")
   )
+
 (define (list-events)
 	(print "Recent interrupts: Chronological order\n")
 	(let ((row-data '())
@@ -172,24 +173,53 @@
 			(set! row-data (cons
 							 (get-event-display-data row db)
 							 row-data)))
-			; (sprintf "~A | ~A " (nth 0 row) (nth 1 row))
-		(do-list row row-data
-				 (print (flatten row)))
+		; (print (sprintf "all row-data: ~A~%~%" row-data))
+		(let ((event-column  (map (lambda(x)(sprintf "~A" (nth 0 x))) row-data ))
+			  (people-column (map (lambda(x)(sprintf "~A" (nth 1 x))) row-data ))
+			  (tags-column   (map (lambda(x)(sprintf "~A" (nth 2 x))) row-data ))
+			  (row-count (length row-data)))
+
+			(print (fmt #t (tabular 
+					  "|" 
+					  (dsp (string-join event-column  "\n")) 
+					  "|" 
+					  (dsp (string-join people-column "\n")) 
+					  "|" 
+					  (dsp (string-join tags-column   "\n" )) 
+					  "|")))
+		; (do-list row row-data
+		; 		 (print (flatten row)))
+
+		)
 	)
 )
 (define (get-event-display-data event-data db)
-	(cons 
-	  (cons event-data 
-	  		(get-names-for-event (car event-data) db))
-	  (get-tags-for-event (car event-data) db))
+	(let ((names (get-names-for-event (car event-data) db))
+		  (tags (get-tags-for-event (car event-data) db)))
+	  ; (print (sprintf "~%names ~A~%" names))
+	  ; (print (sprintf "~%tags ~A~%" tags))
+	  ; (let ((result
+
+	  	(append '() (list event-data) (list names) (list tags))
+
+	  	; ))
+	  	; (print "\nrow_data:")
+		; (display result)
+		; )
+	; (cons 
+	;   (cons event-data 
+	;   		(get-names-for-event (car event-data) db))
+	;   (get-tags-for-event (car event-data) db))
+
+	)
   )
 (define (get-names-for-event eid db)
-	(query fetch-rows (sql db 
-			"select p.name from events e inner join events_people ep on ep.event_id = e.id inner join people p on ep.person_id = p.id where e.id=?;") eid)
+	(flatten (query fetch-rows (sql db 
+			"select p.name from events e inner join events_people ep on ep.event_id = e.id inner join people p on ep.person_id = p.id where e.id=?;") eid))
   )
 (define (get-tags-for-event eid db)
-	(query fetch-rows (sql db 
-			"select t.name from events e inner join events_tags et on et.event_id = e.id inner join tags t on et.tag_id = t.id where e.id=?;") eid)
+	(flatten (query fetch-rows (sql db 
+			"select t.name from events e inner join events_tags et on et.event_id = e.id inner join tags t on et.tag_id = t.id where e.id=?;") eid))
   )
 
 (define (process-command command args)
