@@ -105,16 +105,28 @@
 		; else create it
 	)
 )
+(define (event-has-tag? event-id tag-id db)
+	(let ((count 
+			 (query 
+			 	 fetch-value
+			 	(sql db "SELECT count(*) FROM events_tags where event_id = ? and tag_id = ?;") 
+			 	event-id tag-id)))
+		(> count 0))
+  )
 (define (join-tag-to-event tag-id event-id db)
-	(define s (prepare db "insert into events_tags (event_id, tag_id) values (?, ?);"))
-	(bind-parameters s tag-id event-id )
-	(step s)
-	(finalize s)
+	(if (not (event-has-tag? event-id tag-id db))
+		(begin 
+			(define s (prepare db "insert into events_tags (event_id, tag_id) values (?, ?);"))
+			(bind-parameters s event-id tag-id)
+			(step s)
+			(finalize s)
+		)
+	)
   )
 
 (define (join-tags-to-event tag-ids event-id db)
 	(do-list tag-id tag-ids
-			 (lambda()(join-tag-to-event tag-id event-id db))))
+			 (join-tag-to-event tag-id event-id db)))
 
 (define (tag-event tags event-id db)
     (let ((tag-ids '()))
@@ -131,16 +143,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; INSTRUCTION PARSING
-(define (tag id args)
-	(sprintf "asked to tag ~A with ~A" id (display args))
+(define (tag id tags)
+	; (print (sprintf "asked to tag ~A with ~A" id tags))
 	(let ((db (open-db)))
-		(let ((event-id (find-event-by-id db)))
+		(let ((event-id (find-event-by-id id db)))
 			(if (not (equal? event-id #f))
-		  	  (print "found event now need to tag it")
-		  	  (sprintf "I couldn't find an event with the id ~A" id)
-
+			(tag-event tags id db)
+			(print (sprintf "I couldn't find an event with the id ~A" id))
 			)
-
 		)
 	)
   )
@@ -168,19 +178,26 @@
 	)
 )
 (define (get-event-display-data event-data db)
-	(cons event-data (get-names-for-event (car event-data) db))
+	(cons 
+	  (cons event-data 
+	  		(get-names-for-event (car event-data) db))
+	  (get-tags-for-event (car event-data) db))
   )
 (define (get-names-for-event eid db)
 	(query fetch-rows (sql db 
 			"select p.name from events e inner join events_people ep on ep.event_id = e.id inner join people p on ep.person_id = p.id where e.id=?;") eid)
-
+  )
+(define (get-tags-for-event eid db)
+	(query fetch-rows (sql db 
+			"select t.name from events e inner join events_tags et on et.event_id = e.id inner join tags t on et.tag_id = t.id where e.id=?;") eid)
   )
 
 (define (process-command command args)
+	; (print (sprintf "process-command args: ~A" args))
 	(cond
 		((equal? command "list")  (list-events))
-		((equal? command "tag")   (tag          (string->number (car args)) (cdr args)))
-		((equal? command "retag") (retag        (string->number (car args)) (cdr args)))
+		((equal? command "tag")   (tag          (string->number (nth 1 args)) (cdr (cdr args))))
+		((equal? command "retag") (retag        (string->number (nth 1 args)) (cdr (cdr args))))
 		((equal? command "delete")(delete-entry (string->number (car args))))
 		((equal? command "data")  (data (car args)))
 		(else (sprintf "Unknown command ~A" command))
@@ -191,6 +208,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define recognized-commands '("tag" "retag" "delete" "data" "list"))
 (define (main args)
+	; (print (sprintf "main args: ~A" args))
 	(let (	(downcased-args (downcase-list args)))
 		(let ((first-arg (nth 1 downcased-args)))
 			(if (list-includes recognized-commands first-arg)
