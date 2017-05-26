@@ -56,8 +56,6 @@ ID | Person(s) | When                 | Tags
 
 
 #### Tag an event
-**NOT IMPLEMENTED**  
-
 `hey tag <event id> <tag(s)>`  
 `hey retag <event id> <tag(s)>`
 
@@ -68,6 +66,17 @@ ID | Person(s) | When                 | Tags
 If you `tag` the same event twice then the new tags will be appended to the list.
 
 If you `retag` an event the new list will replace the old one
+
+#### Comment on an event
+`hey comment <event id> <my comment string>`
+
+`<event id>` is one of the ids shown by `hey list` or `hey data`
+
+`<my comment string>` is... your comment. Doesn't have to be in quotes. Ends
+when you hit enter.
+
+Note if you comment on the same event twice it will replace the existing
+comment with your new one.
 
 #### Delete accidental interrupts
 **NOT IMPLEMENTED**  
