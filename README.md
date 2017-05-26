@@ -91,3 +91,8 @@ similar to allow you to export just the data for a specific person, or date
 range.
 
 
+## Testing
+Set the `HEY_DB` environement variable to a path to your test DB and `hey` will
+use that instead. That way you can test / develop on it in a test db but still
+use it to track real interruptions in the default db.
+

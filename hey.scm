@@ -12,6 +12,7 @@
 (require-extension numbers)
 ; (require-extension mdcd)
 (use loops)
+(use posix)
 (use listicles)
 (use fmt)
 ; SET UP FUNCTIONS
@@ -96,13 +97,16 @@
 	; look for it in dropbox
 	; look for it in local storage location
 	; if you don't find it, create it
-	(let ((dropbox-path (pathname-expand "~/Dropbox/apps/hey/database/hey.db")))
-		; test if dropbox-path exists
-			; open it
-			(open-database dropbox-path)
-		; elsif local storage location exists
-			; open it
-		; else create it
+	(if (not (get-environment-variable "HEY_DB"))
+		(let ((dropbox-path (pathname-expand "~/Dropbox/apps/hey/database/hey.db")))
+			; test if dropbox-path exists
+				; open it
+				(open-database dropbox-path)
+			; elsif local storage location exists
+				; open it
+			; else create it
+		)
+		(open-database (get-environment-variable "HEY_DB"))
 	)
 )
 (define (event-has-tag? event-id tag-id db)
