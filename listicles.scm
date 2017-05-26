@@ -98,4 +98,9 @@
     (let ((index (list-index (lambda(x)(equal? an-item x)) a-list)))
       (if (eq? index #f)
         #f #t)))
+
+  (define (flatten a-list)
+    (cond ((null? a-list) '())
+          ((pair? a-list) (append (flatten (car a-list)) (flatten (cdr a-list))))
+          (else (list a-list))))
 )
