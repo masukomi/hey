@@ -19,7 +19,7 @@
 ; CORE FUNCTIONALITY
 (define (find-or-create-person name db)
 	; returns (name, id) list
-	
+	; (print (sprintf "find-or-create-person ~A" name))
 	(let (( id (query 
 				 fetch-value 
 				 (sql db "SELECT id FROM people WHERE name=? limit 1;") name)))
@@ -56,6 +56,7 @@
   )
 
 (define (create-entry people db)
+	; (print (sprintf "in create-entry for ~A" people))
 	(let ((people-ids '()))
 		(do-list name people 
 			(set! people-ids (cons 
@@ -131,6 +132,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; INSTRUCTION PARSING
 (define (tag id args)
+	(sprintf "asked to tag ~A with ~A" id (display args))
 	(let ((db (open-db)))
 		(let ((event-id (find-event-by-id db)))
 			(if (not (equal? event-id #f))
@@ -141,7 +143,6 @@
 
 		)
 	)
-	(sprintf "asked to tag ~A with ~A" id (display args))
   )
 (define (retag id args)
 	(sprintf "asked to retag ~A with ~A" id (display args))
@@ -153,37 +154,55 @@
 	(print "asked to provide data")
   )
 (define (list-events)
-	(display (query fetch-rows (sql db 
-		"SELECT e.id, e.created_at FROM events e order by e.created_at asc;")))
+	(print "Recent interrupts: Chronological order\n")
+	(let ((row-data '())
+		  (db (open-db)))
+		(do-list row (query fetch-rows (sql db 
+			"SELECT e.id, e.created_at FROM events e order by e.created_at asc;"))
+			(set! row-data (cons
+							 (get-event-display-data row db)
+							 row-data)))
+			; (sprintf "~A | ~A " (nth 0 row) (nth 1 row))
+		(do-list row row-data
+				 (print (flatten row)))
+	)
+)
+(define (get-event-display-data event-data db)
+	(cons event-data (get-names-for-event (car event-data) db))
   )
+(define (get-names-for-event eid db)
+	(query fetch-rows (sql db 
+			"select p.name from events e inner join events_people ep on ep.event_id = e.id inner join people p on ep.person_id = p.id where e.id=?;") eid)
+
+  )
+
 (define (process-command command args)
-	(case command
-		('("list")  (list-events))
-		('("tag")   (tag          (string->number (car args)) (cdr args)))
-		('("retag") (retag        (string->number (car args)) (cdr args)))
-		('("delete")(delete-entry (string->number (car args))))
-		('("data")  (data (car args)))
+	(cond
+		((equal? command "list")  (list-events))
+		((equal? command "tag")   (tag          (string->number (car args)) (cdr args)))
+		((equal? command "retag") (retag        (string->number (car args)) (cdr args)))
+		((equal? command "delete")(delete-entry (string->number (car args))))
+		((equal? command "data")  (data (car args)))
+		(else (sprintf "Unknown command ~A" command))
 	)
   )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+(define recognized-commands '("tag" "retag" "delete" "data" "list"))
+(define (main args)
+	(let (	(downcased-args (downcase-list args)))
+		(let ((first-arg (nth 1 downcased-args)))
+			(if (list-includes recognized-commands first-arg)
+				(process-command first-arg (cdr downcased-args))
+				(create-entry (cdr downcased-args) (open-db))
+				;(sprintf "List didn't include ~A" first-arg)
+			)
+		)
+	)
+)
 ; exec 
 (if (not (equal? 'nil (argv)))
-	(lambda()(
-		(define downcased-args (downcase-list (argv)))
-		(define first-arg (nth 1 downcased-args))
-
-		; (print (display downcased-args))
-		; (print (display first-arg))
-
-		(define recognized-commands '("tag" "retag" "delete" "data" "list"))
-
-		(if (list-includes recognized-commands first-arg)
-  	  	  (process-command first-arg (cdr downcased-args))
-  	  	  (create-entry (cdr downcased-args) (open-db))
-  	  	  )
-  	))
+	(main (argv))
 )
 
