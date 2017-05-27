@@ -29,13 +29,15 @@ if [ "$deploy_type" = "clean_gui" ] || [ "$deploy_type" = "gui" ]; then
 	cp listicles.so hey.app/Contents/MacOS/
 	cp default.db hey.app/Contents/MacOS/
 	cp -r hey/* hey.app/Contents/MacOS/
+
+	echo "replace /Appications/hey.app ? [y|n]: "
+	read replace_it
+	if [ "$replace_it" = "y" ]; then 
+		rm -rf /Applications/hey.app
+		cp -r hey.app /Applications/
+		echo "replaced."
+	fi
+
 fi
 
-echo "replace /Appications/hey.app ? [y|n]: "
-read replace_it
-if [ "$replace_it" = "y" ]; then 
-	rm -rf /Applications/hey.app
-	cp -r hey.app /Applications/
-	echo "replaced."
-fi
 
