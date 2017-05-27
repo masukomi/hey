@@ -17,7 +17,7 @@ if [ "$deploy_type" = "clean_gui" ]; then
 	chicken-install -deploy -p hey/ srfi-1
 	chicken-install -deploy -p hey/ pathname-expand
 	chicken-install -deploy -p hey/ numbers
-	chicken-install -deploy -p hey/ toml
+	chicken-install -deploy -p hey/ json-abnf
 elif [ "$deploy_type" = "local" ]; then
 	echo "doing local build"
 	csc hey.scm
