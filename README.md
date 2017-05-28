@@ -82,8 +82,6 @@ Note if you comment on the same event twice it will replace the existing
 comment with your new one.
 
 #### Delete accidental interrupts
-**NOT IMPLEMENTED**  
-
 `hey delete <event id>`
 
 `<event id>` is one of the ids shown by `hey list` or `hey data`
@@ -104,7 +102,23 @@ range.
 
 
 ## Testing
-Set the `HEY_DB` environement variable to a path to your test DB and `hey` will
-use that instead. That way you can test / develop on it in a test db but still
-use it to track real interruptions in the default db.
+`hey` looks for a json file at `~/.config/hey/config.json`
 
+To have `hey` use a different database location set the value of `HEY_DB` to be
+the path to your SQLite file.
+
+For example:
+
+```
+{
+  "HEY_DB": "~/path/to/my/hey.test.db"
+}
+```
+
+If you are building `hey` from source and not using the shell script created by
+the installer then you can set the `HEY_DB` environment variable to a path to
+your test DB and `hey` will use that instead. That way you can test / develop on
+it in a test db but still use it to track real interruptions in the default db.
+
+The environment variable trumps the config file, and the config file trumps 
+the default.
