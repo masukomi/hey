@@ -4,7 +4,6 @@ echo "deploy type? [clean_gui|local|gui]: "
 read deploy_type
 
 # no matter what, we're doing this...
-csc -emit-all-import-libraries -explicit-use listicles.scm
 
 if [ "$deploy_type" = "clean_gui" ]; then
 	echo "doing clean gui build."
@@ -27,6 +26,8 @@ elif [ "$deploy_type" = "local" ]; then
 fi
 
 if [ "$deploy_type" = "clean_gui" ] || [ "$deploy_type" = "gui" ]; then
+	# let's just make sure listicles is good and fresh
+	csc -emit-all-import-libraries -explicit-use listicles.scm
 	rm -rf hey.app
 	csc -deploy -gui hey.scm
 	cp listicles hey.app/Contents/MacOS/
