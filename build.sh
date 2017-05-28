@@ -33,6 +33,9 @@ if [ "$deploy_type" = "clean_gui" ] || [ "$deploy_type" = "gui" ]; then
 	cp listicles hey.app/Contents/MacOS/
 	cp default.db hey.app/Contents/MacOS/
 	cp -r hey_libs/* hey.app/Contents/MacOS/
+	rm hey.app/Contents/Resources/CHICKEN.icns
+	cp images/iconset.icns hey.app/Contents/Resources/CHICKEN.icns
+	# perl -pi -e 's/CHICKEN.icns/iconfile.icns/g' hey.app/Contents/Info.plist
 
 	echo "replace /Appications/hey.app ? [y|n]: "
 	read replace_it
