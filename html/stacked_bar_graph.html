@@ -5,6 +5,8 @@
     <link rel="stylesheet"
           href="css/chartist.min.css">
     <script src="javascript/chartist.min.js"></script>
+    <script src="javascript/chartist-plugin-tooltip.min.js"></script>
+    <link href="css/chartist-plugin-tooltip.css" rel="stylesheet" type="text/css" />
     <script>
       function getParameterByName(name, url) {
           if (!url) url = window.location.href;
@@ -35,11 +37,24 @@
     <div class="ct-chart ct-perfect-fourth graph_box"></div>
     <!-- Site content goes here !-->
     <script>
-      var demo_labels = ["Demo 1", "Demo 2", "Demo 3", "Demo 4"]
+      var demo_labels = ["9AM", "10AM", "11AM", "12PM"]
       var demo_series =  [ // TODO extract this from url
-          [800000, 1200000, 1400000, 1300000],
-          [200000, 400000, 500000, 300000],
-          [100000, 200000, 400000, 600000]
+          [
+            {meta: 'tom', value: 1},
+            {meta: 'tom', value: 2},
+            {meta: 'tom', value: 8}
+          ],
+          [
+            {meta: 'dick', value: 2},
+            {meta: 'dick', value: 1},
+            {meta: 'dick', value: 3}
+          ],
+          [
+            {meta: 'harry', value: 4},
+            {meta: 'harry', value: 1},
+            {meta: 'harry', value: 1}
+          ]
+          
         ];
       var final_labels = demo_labels;
       try {
@@ -69,11 +84,9 @@
         series: final_series
       }, {
         stackBars: true,
-        axisY: {
-          labelInterpolationFnc: function(value) {
-            return (value / 1000) + 'k';
-          }
-        }
+        plugins: [
+          Chartist.plugins.tooltip()
+        ]
       }).on('draw', function(data) {
         if(data.type === 'bar') {
           data.element.attr({
@@ -85,3 +98,4 @@
     </script>
   </body>
 </html>
+
