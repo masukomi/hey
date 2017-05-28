@@ -6,10 +6,12 @@
    split-by
    list-includes
    flatten
+   pairs-list-to-hash
   )
   (import chicken)
   (import scheme)
   (import srfi-1)
+  (import srfi-69)
   (use extras)
   ; (doc-fun "nth" 
   ;   "## Public: 
@@ -104,4 +106,10 @@
     (cond ((null? a-list) '())
           ((pair? a-list) (append (flatten (car a-list)) (flatten (cdr a-list))))
           (else (list a-list))))
+
+  (define (pairs-list-to-hash pairs-list)
+    (let ((h (make-hash-table equal?)))
+      (map (lambda (pair) (hash-table-set! h (car pair) (cdr pair))) pairs-list)
+      h
+      ))
 )
