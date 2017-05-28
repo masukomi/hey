@@ -210,7 +210,7 @@
   )
 
 (define (list-events)
-	(print "Recent interruptions in Chronological order\n")
+	(print "Recent interruptions in chronological order...\n")
 	(let ((row-data '())
 		  (db (open-db)))
 		(do-list row (query fetch-rows (sql db 
@@ -220,19 +220,22 @@
 							 (get-event-display-data row db)
 							 row-data)))
 		; (print (sprintf "all row-data: ~A~%~%" row-data))
-		(let ((event-column  (map (lambda(x)(sprintf "~A" (nth 0 x))) row-data ))
-			  (people-column (map (lambda(x)(sprintf "~A" (nth 1 x))) row-data ))
-			  (tags-column   (map (lambda(x)(sprintf "~A" (nth 2 x))) row-data ))
+		(let ((id-column     (map (lambda(x)(sprintf "~A" (car (nth 0 x)))) row-data ))
+			  (event-column  (map (lambda(x)(sprintf "~A" (nth 1 (nth 0 x)))) row-data ))
+			  (people-column (map (lambda(x)(sprintf "~A" (string-join (nth 1 x) ", "))) row-data ))
+			  (tags-column   (map (lambda(x)(sprintf "~A" (string-join(nth 2 x) ", "))) row-data ))
 			  (row-count (length row-data)))
 
-			(print (fmt #t (tabular 
-					  "|" 
-					  (dsp (string-join event-column  "\n")) 
-					  "|" 
-					  (dsp (string-join people-column "\n")) 
-					  "|" 
-					  (dsp (string-join tags-column   "\n" )) 
-					  "|")))
+			(fmt #t (tabular 
+					  " | " 
+					  (dsp (string-join (append '("ID") id-column)  "\n")) 
+					  " | " 
+					  (dsp (string-join (append '("When") event-column)  "\n")) 
+					  " | " 
+					  (dsp (string-join (append '("Who") people-column) "\n")) 
+					  " | " 
+					  (dsp (string-join (append '("Tags") tags-column)   "\n" )) 
+					  " | "))
 		; (do-list row row-data
 		; 		 (print (flatten row)))
 

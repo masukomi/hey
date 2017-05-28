@@ -45,12 +45,11 @@ entries when you accidentally type "bob" one time and "Bob" the next.
 #### Viewing recent events
 `hey list`
 
-NOTE: it doesn't look this pretty ... yet, but it will. 
 ```
 Recent interrupts: Chronological order
 Starting at midnight yesterday. 
 
-ID | Person(s) | When                 | Tags
+ID | Who       | When                 | Tags
 2. | Bob, Mary | 4/12/17 14:23        | meeting, scheduled
 3. | Bob       | 4/12/17 14:26        |
 4. | Sam       | 4/12/17 16:11        | question 
