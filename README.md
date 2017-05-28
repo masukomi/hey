@@ -16,9 +16,14 @@ type `hey <person's name>` on the command line.
 That's it. Entries will be created in a SQLite database for the event, the
 person, their association, and when it happened.
 
-Later on you can, optionally, go back and tag the event, leave a note, 
+Want to start tracking _why_ people are interrupting you? After the interruption 
+you can, optionally, list and tag the events, leave a note, 
 or generate reports graphing all your past interruptions.
 
+Track it for long enough and patterns are sure to emerge. Maybe you'll find 
+that a little documentation could save you hours a week. Maybe you'll find that
+one person that's devouring more time than anyone else and discuss a better way to
+handle things.
 
 ## Instructions
 
@@ -38,10 +43,9 @@ Note: all names are downcased in the database to save worrying about multiple
 entries when you accidentally type "bob" one time and "Bob" the next.
 
 #### Viewing recent events
-**NOT IMPLEMENTED**  
-
 `hey list`
 
+NOTE: it doesn't look this pretty ... yet, but it will. 
 ```
 Recent interrupts: Chronological order
 Starting at midnight yesterday. 
