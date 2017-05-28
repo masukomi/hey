@@ -3,6 +3,9 @@
 echo "deploy type? [clean_gui|local|gui]: "
 read deploy_type
 
+# no matter what, we're doing this...
+csc -emit-all-import-libraries -explicit-use listicles.scm
+
 if [ "$deploy_type" = "clean_gui" ]; then
 	echo "doing clean gui build."
 
