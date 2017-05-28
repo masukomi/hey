@@ -10,11 +10,14 @@
 (require-extension srfi-1)
 (require-extension pathname-expand)
 (require-extension numbers)
+(require-extension json-abnf)
 ; (require-extension mdcd)
 (use loops)
 (use posix)
 (use listicles)
 (use fmt)
+(use extras)
+(use utils)
 ; SET UP FUNCTIONS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; CORE FUNCTIONALITY
@@ -93,27 +96,40 @@
 	(query fetch-value (sql db "SELECT id FROM events where id = ?;") id)
 )
 
+(define (env-or-default-db-path)
+	(let ((env-db (get-environment-variable "HEY_DB") ))
+		; (print (sprintf "env-db: ~A    || expanded: ~A" env-db (pathname-expand env-db)))
+		(if (or (not env-db) (equal? "" env-db))
+			(pathname-expand "~/Dropbox/apps/hey/database/hey.db")
+			(pathname-expand env-db))))
+
+(define (get-config)
+	(let (	(config-path (pathname-expand "~/.config/hey/config.json"))
+			(env-db (get-environment-variable "HEY_DB") ))
+		(if (file-exists? config-path) 
+			; TODO: handle exception from badly formed config files
+			(let ((h (pairs-list-to-hash (parser (read-all config-path)))))
+				(if (or (not (hash-table-ref h "HEY_DB"))
+						(equal? "" (hash-table-ref h "HEY_DB")))
+					(hash-table-set! h "HEY_DB" (env-or-default-db-path)))
+				h
+				)
+			(let ((h (make-hash-table equal?)))
+				(hash-table-set! h "HEY_DB" (env-or-default-db-path))
+				h
+			)
+		)
+	)
+)
+
 (define (open-db)
 	; look for it in dropbox
 	; look for it in local storage location
 	; if you don't find it, create it
-	(let ((hey_db (get-environment-variable "HEY_DB")))
-		; (print (sprintf "HEY_DB: ~A" hey_db))
-		(if (or (not hey_db) (equal? "" hey_db))
-			(begin
-				(print "opening default db")
-				(let ((dropbox-path (pathname-expand "~/Dropbox/apps/hey/database/hey.db")))
-					; test if dropbox-path exists
-						; open it
-						(open-database dropbox-path)
-					; elsif local storage location exists
-						; open it
-					; else create it
-				)
-			)
-			(begin 
-				(open-database hey_db)
-			)
+	(let ((config (get-config)))
+		(let ((hey-db (hash-table-ref config "HEY_DB")))
+			; (print (sprintf "config-says db at: ~A " hey-db))
+			(open-database (pathname-expand hey-db))
 		)
 	)
 )
@@ -194,7 +210,7 @@
   )
 
 (define (list-events)
-	(print "Recent interrupts: Chronological order\n")
+	(print "Recent interruptions in Chronological order\n")
 	(let ((row-data '())
 		  (db (open-db)))
 		(do-list row (query fetch-rows (sql db 
