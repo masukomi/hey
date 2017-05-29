@@ -1,7 +1,10 @@
 #!/bin/sh
 
-echo "deploy type? [clean_gui|local|gui]: "
-read deploy_type
+deploy_type=$1
+if [ "$deploy_type" = "" ]; then
+	echo "deploy type? [clean_gui|local|gui]: "
+	read deploy_type
+fi
 
 # no matter what, we're doing this...
 
@@ -20,6 +23,9 @@ if [ "$deploy_type" = "clean_gui" ]; then
 	chicken-install -deploy -p hey_libs/ pathname-expand
 	chicken-install -deploy -p hey_libs/ numbers
 	chicken-install -deploy -p hey_libs/ json-abnf
+	chicken-install -deploy -p hey_libs/ json
+	chicken-install -deploy -p hey_libs/ uri-common
+	chicken-install -deploy -p hey_libs/ shell
 elif [ "$deploy_type" = "local" ]; then
 	echo "doing local build"
 	csc hey.scm
