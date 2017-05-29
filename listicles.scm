@@ -7,6 +7,10 @@
    list-includes
    flatten
    pairs-list-to-hash
+   replace-nth
+   last-index
+   sort-strings>
+   sort-strings<
   )
   (import chicken)
   (import scheme)
@@ -33,6 +37,32 @@
       (if (eq? n 0)
         (car lst)
         (nth (- n 1) (cdr lst)))))
+
+  (define (last-index lst)
+    (if (eq? (length lst) 0)
+      0
+      (- (length lst) 1))
+    )
+
+
+  (define (replace-nth n replacement lst)
+    (cond 
+      ((null? lst) '())
+      ((eq? n 0) (cons replacement (replace-nth (- n 1) '() (cdr lst))))
+      (else
+        (cons (car lst) (replace-nth (- n 1) replacement (cdr lst))))
+    ))
+
+  ; found on stack overflow
+  ; https://stackoverflow.com/a/4542458/13973
+  (define (find-replace a b list)
+   (cond
+    ((null? list) '())
+    ((list? (car list)) (cons (find-replace a b (car list)) (find-replace a b (cdr list))))
+    ((eq? (car list) a) (cons b (find-replace a b (cdr list))))
+    (else
+     (cons (car list) (find-replace a b (cdr list))))))
+
 
   ; (doc-fun "range"
   ;   "### Public:
@@ -112,4 +142,21 @@
       (map (lambda (pair) (hash-table-set! h (car pair) (cdr pair))) pairs-list)
       h
       ))
+
+  (define (sort-strings> lst)
+    (cond
+      ((null? lst) '())
+      (else (insert-string> (first lst) (sort-strings> (cdr lst))))))
+  (define (sort-strings< lst)
+    (reverse (sort-strings> lst))) ; cheat!
+
+
+(define (insert-string> s lst)
+  (cond
+    ((null? lst) (cons s '()))
+    (else
+      (if (string>=? s (first lst))
+              (cons s lst)
+              (cons (first lst) (insert-string> s (cdr lst)))))))
+
 )

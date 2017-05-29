@@ -9,7 +9,11 @@
     (split-by . listicles#split-by)
     (list-includes . listicles#list-includes)
     (flatten . listicles#flatten)
-    (pairs-list-to-hash . listicles#pairs-list-to-hash))
+    (pairs-list-to-hash . listicles#pairs-list-to-hash)
+    (replace-nth . listicles#replace-nth)
+    (last-index . listicles#last-index)
+    (sort-strings> . listicles#sort-strings>)
+    (sort-strings< . listicles#sort-strings<))
   (list)
   (list))
 
