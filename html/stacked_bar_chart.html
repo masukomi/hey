@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My first Chartist Tests</title>
+    <title>Interruptions by person, by hour.</title>
     <link rel="stylesheet"
           href="css/chartist.min.css">
     <script src="javascript/chartist.min.js"></script>
     <script src="javascript/chartist-plugin-tooltip.min.js"></script>
     <link href="css/chartist-plugin-tooltip.css" rel="stylesheet" type="text/css" />
     <script>
+      Chartist.precision = 0;
       function getParameterByName(name, url) {
           if (!url) url = window.location.href;
           name = name.replace(/[\[\]]/g, "\\$&");
