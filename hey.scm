@@ -11,6 +11,8 @@
 (require-extension pathname-expand)
 (require-extension numbers)
 (require-extension json-abnf)
+(require-extension json)
+(require-extension uri-common)
 ; (require-extension mdcd)
 (use loops)
 (use posix)
@@ -18,6 +20,7 @@
 (use fmt)
 (use extras)
 (use utils)
+(use ports)
 ; SET UP FUNCTIONS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; CORE FUNCTIONALITY
@@ -145,10 +148,11 @@
 (define (join-tag-to-event tag-id event-id db)
 	(if (not (event-has-tag? event-id tag-id db))
 		(begin 
-			(define s (prepare db "insert into events_tags (event_id, tag_id) values (?, ?);"))
-			(bind-parameters s event-id tag-id)
-			(step s)
-			(finalize s)
+			(let (( s (prepare db "insert into events_tags (event_id, tag_id) values (?, ?);")))
+				(bind-parameters s event-id tag-id)
+				(step s)
+				(finalize s)
+			)
 		)
 	)
   )
@@ -211,23 +215,152 @@
 				(begin
 					; (print (sprintf "will delete event ~A" event-id))
 					; TODO: stick this in a transaction
-					(define s (prepare db "delete from events_people where event_id=?;"))
-					(bind-parameters s event-id)
-					(step s)
-					(finalize s)
-					(define s (prepare db "delete from events where id=?;"))
-					(bind-parameters s event-id)
-					(step s)
-					(finalize s)
+					(let (( s (prepare db "delete from events_people where event_id=?;")))
+						(bind-parameters s event-id)
+						(step s)
+						(finalize s)
+						(set! s (prepare db "delete from events where id=?;"))
+						(bind-parameters s event-id)
+						(step s)
+						(finalize s)
+					)
 				)
 				(print (sprintf "I couldn't find an event with the id ~A" event-id))
 			)
 		)
 	)
   )
+
 (define (data)
 	(print "asked to provide data")
   )
+
+(define (graph args)
+	(if (null? args)
+		(print "No graph type specified. 
+Available graph types:
+* people-by-hour
+  * A stacked bar chart of the number of interrupts, by person, by hour
+    for the past 24hrs")
+		(cond 
+			((equal? "people-by-hour" (car args))
+				(begin ; generate the only supported graph type people-by-hour
+					; TODO modify query to use this where clause 
+					; once i figure out how to generate a the date at midnight yesterday
+					; where e.created_at BETWEEN '2017-05-25' AND 'now'
+					(let ((db (open-db)))
+						(let ( 
+							(db (open-db))
+							(series-data '())
+							(hours-hash (make-hash-table equal?))
+							(person->hour->value (make-hash-table equal?))
+							(previous-name "")
+							(rows (query fetch-rows (sql db 
+"select 
+  p.name,
+  strftime('%H', e.created_at) hour, count(*) interrupts
+from 
+  events e 
+  inner join events_people ep on ep.event_id = e.id
+  inner join people p on ep.person_id = p.id
+group by 2, 1
+order by p.name asc;"))))
+; that looks like
+; name | hour | interrupts
+; bob  | 11   | 4
+; mary | 13   | 2
+;
+; OR 
+; ( ("bob"  11 4)
+;   ("mary" 13 2))
+
+							(do-list row rows
+								(begin ; make the new hash
+									;(print (sprintf "graph row: ~A - car: ~A" row (car row)))
+									(let ((row-hash (make-hash-table equal?))
+										  (person (car row))
+										  (hour (car (cdr row)))
+										  (interrupts (last row))
+										  )
+										(print (sprintf "person: ~A - hour: ~A interrupts: ~A" 
+														person hour interrupts))
+										; and the new entry
+										(hash-table-set! row-hash "meta" person)
+										(hash-table-set! row-hash "value" interrupts)
+										(if (not (list-includes (hash-table-keys person->hour->value) person))
+											(hash-table-set! person->hour->value
+															 person
+															 (make-hash-table equal?))
+											)
+										(hash-table-set! 
+										  (hash-table-ref person->hour->value person)
+										  hour
+										  interrupts)
+										(hash-table-set! hours-hash hour #t)
+									) ; END (let ((row-hash (make-hash-table equal?))
+								); END begin
+							); END do-list row rows
+							; OK Now we have the hashes for everyone's time
+							; let's fill in the hours they don't have
+							(print (sprintf "hours: ~A" (sort-strings< (hash-table-keys hours-hash))))
+							(do-list person (sort-strings< (hash-table-keys person->hour->value))
+								(print (sprintf "colating ~A" person))
+								(do-list hour (sort-strings< (hash-table-keys hours-hash))
+									(print (sprintf " - hour: ~A" hour))
+									(let ((value (if (list-includes 
+														(hash-table-keys 
+															(hash-table-ref 
+																person->hour->value person))
+														hour)
+													(hash-table-ref 
+													  (hash-table-ref
+														person->hour->value person)
+													  hour)
+													0)))
+										(let ((row-hash
+												(make-hash-table equal?)))
+											(hash-table-set! row-hash "meta" person)
+											(hash-table-set! row-hash "value" value)
+											(if (not (equal? person previous-name))
+												(begin
+													(set! series-data
+														(append series-data
+																(list (list row-hash))))
+													(set! previous-name person)
+												)
+												(begin 
+													(let ((replacement 
+														 	 (append (last series-data) 
+																 	 (list row-hash))))
+														(set! series-data
+															(replace-nth 
+															(last-index series-data) ; nth
+															replacement ; replacement
+															series-data)
+														)
+													)
+												)
+											)
+										)
+									)
+								)
+							)
+							; data's built
+							; let's generate the report
+							(open-url (generate-url 
+										"stacked_bar_chart"
+										(sort-strings< (hash-table-keys hours-hash))
+										series-data))
+						); END the big let
+					)
+				); END people-by-hour begin...
+			); END people-by-hour cond test
+			(else
+				(print (sprintf "unknown report type: ~A" (car args))))
+		); END of cond
+	); END of if
+)
+
 
 (define (list-events)
 	(print "Recent interruptions in chronological order...\n")
@@ -239,7 +372,6 @@
 			(set! row-data (cons
 							 (get-event-display-data row db)
 							 row-data)))
-		; (print (sprintf "all row-data: ~A~%~%" row-data))
 		(let ((id-column     (map (lambda(x)(sprintf "~A" (car (nth 0 x)))) row-data ))
 			  (event-column  (map (lambda(x)(sprintf "~A" (nth 1 (nth 0 x)))) row-data ))
 			  (people-column (map (lambda(x)(sprintf "~A" (string-join (nth 1 x) ", "))) row-data ))
@@ -265,21 +397,7 @@
 (define (get-event-display-data event-data db)
 	(let ((names (get-names-for-event (car event-data) db))
 		  (tags (get-tags-for-event (car event-data) db)))
-	  ; (print (sprintf "~%names ~A~%" names))
-	  ; (print (sprintf "~%tags ~A~%" tags))
-	  ; (let ((result
-
 	  	(append '() (list event-data) (list names) (list tags))
-
-	  	; ))
-	  	; (print "\nrow_data:")
-		; (display result)
-		; )
-	; (cons 
-	;   (cons event-data 
-	;   		(get-names-for-event (car event-data) db))
-	;   (get-tags-for-event (car event-data) db))
-
 	)
   )
 (define (get-names-for-event eid db)
@@ -293,20 +411,56 @@
 
 (define (process-command command args)
 	; (print (sprintf "process-command args: ~A" args))
-	(cond
-		((equal? command "list")   (list-events))
-		((equal? command "tag")    (tag          (string->number (nth 1 args)) (cdr (cdr args))))
-		((equal? command "comment")(comment      (string->number (nth 1 args)) (string-join (cdr (cdr args)) " ")))
-		((equal? command "retag")  (retag        (string->number (nth 1 args)) (cdr (cdr args))))
-		((equal? command "delete") (delete-entry (string->number (nth 1 args))))
-		((equal? command "data")   (data (car args)))
-		(else (sprintf "Unknown command ~A" command))
+	; sometimes there's nothing passed after the command
+	; in which case args is a string not a list
+	; but some commands work with and without params... 
+	; so we need to make sure it's always a list
+	(let ((args 
+			(if (not (string? args))
+				args
+				'(args))))
+		(cond
+			((equal? command "list")   (list-events))
+			((equal? command "tag")    (tag          (string->number (nth 1 args)) (cdr (cdr args))))
+			((equal? command "comment")(comment      (string->number (nth 1 args)) (string-join (cdr (cdr args)) " ")))
+			((equal? command "retag")  (retag        (string->number (nth 1 args)) (cdr (cdr args))))
+			((equal? command "delete") (delete-entry (string->number (nth 1 args))))
+			((equal? command "data")   (data (car args)))
+			((equal? command "graph")  (graph (cdr args)))
+			(else (sprintf "Unknown command ~A" command))
+		)
 	)
   )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GRAPHING
+(define (json->uri-string data)
+	(uri-encode-string (json->string data))
+)
+(define (json->string data)
+	(let ((output-port (open-output-string)))
+		(json-write data output-port)
+		(get-output-string output-port)
+	)
+  )
+(define (generate-url graph-type labels series)
+	(let (
+		  (encoded-labels (json->uri-string labels))
+		  (encoded-series (json->uri-string series))
+		  )
+	  (sprintf "http://interrupttracker.com/~A.html?labels=~A&series=~A"
+		graph-type
+		encoded-labels
+		encoded-series)
+	)
+  )
+(define (open-url url)
+	; (print url)
+	(system (sprintf "open ~A" url))
+	)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(define recognized-commands '("tag" "retag" "delete" "data" "list" "comment"))
+(define recognized-commands '("tag" "retag" "delete" "data" "list" "comment" "graph"))
 (define (main args)
 	; (print (sprintf "main args: ~A" args))
 	(let (	(downcased-args (downcase-list args)))
@@ -320,7 +474,7 @@
 	)
 )
 ; exec 
-(if (not (equal? 'nil (argv)))
+(if (and (not (null? (argv))) (not (equal? (car (argv)) "csi")))
 	(main (argv))
 )
 
