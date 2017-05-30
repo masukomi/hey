@@ -2,36 +2,43 @@
 
 deploy_type=$1
 if [ "$deploy_type" = "" ]; then
-	echo "deploy type? [clean_gui|local|gui]: "
+	echo "deploy type? [libraries|local|gui]: "
 	read deploy_type
 fi
 
-# no matter what, we're doing this...
-
-if [ "$deploy_type" = "clean_gui" ]; then
+if [ "$deploy_type" = "libraries" ]; then
 	echo "doing clean gui build."
 
 	if [ -d "hey_libs" ]; then
 		  rm -rf hey_libs
 	fi
 	mkdir -p hey_libs
+	chicken-install fmt
 	chicken-install -deploy -p hey_libs/ fmt
+	chicken-install loops
 	chicken-install -deploy -p hey_libs/ loops
+	chicken-install sql-de-lite
 	chicken-install -deploy -p hey_libs/ sql-de-lite
+	chicken-install srfi-13
 	chicken-install -deploy -p hey_libs/ srfi-13
+	chicken-install srfi-1
 	chicken-install -deploy -p hey_libs/ srfi-1
+	chicken-install pathname-expand
 	chicken-install -deploy -p hey_libs/ pathname-expand
+	chicken-install numbers
 	chicken-install -deploy -p hey_libs/ numbers
+	chicken-install json-abnf
 	chicken-install -deploy -p hey_libs/ json-abnf
+	chicken-install json
 	chicken-install -deploy -p hey_libs/ json
+	chicken-install uri-common
 	chicken-install -deploy -p hey_libs/ uri-common
+	chicken-install shell
 	chicken-install -deploy -p hey_libs/ shell
 elif [ "$deploy_type" = "local" ]; then
 	echo "doing local build"
 	csc hey.scm
-fi
-
-if [ "$deploy_type" = "clean_gui" ] || [ "$deploy_type" = "gui" ]; then
+elif [ "$deploy_type" = "gui" ]; then
 	# let's just make sure listicles is good and fresh
 	csc -emit-all-import-libraries -explicit-use listicles.scm
 	rm -rf hey.app
