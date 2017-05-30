@@ -7,6 +7,8 @@
     <script src="javascript/chartist.min.js"></script>
     <script src="javascript/chartist-plugin-tooltip.min.js"></script>
     <link href="css/chartist-plugin-tooltip.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="css/LemonYellowSunWebfontsKit.css"/>
+    
     <script>
       Chartist.precision = 0;
       function getParameterByName(name, url) {
@@ -32,13 +34,37 @@
         width: 75%;
         margin-left: 12.5%;
     }
+    .LemonYellowSun { font-family: LemonYellowSun; }
+    #logo{
+      max-width: 6rem;
+      display:block;
+    }
+    #logo_holder{
+
+    }
+    .page_header{
+      display: inline-block;
+      float: left;
+      margin-left: 1rem;
+    }
+    .header {
+      display: block;
+      height: 4rem;
+    }
     </style>
   </head>
   <body>
+    <div class="header">
+      <span class="logo_holder">
+        <a href="https://interrupttracker.com"><img
+           src="images/hey_plus_text_icon.svg" id="logo" align="left" /></a>
+      </span>
+      <h3 class="LemonYellowSun page_header">Interrupts, by person, by hour</h3>
+    </div>
     <div class="ct-chart ct-perfect-fourth graph_box"></div>
     <!-- Site content goes here !-->
     <script>
-      var demo_labels = ["9AM", "10AM", "11AM", "12PM"]
+      var demo_labels = ["10", "11", "12", "13"]
       var demo_series =  [ // TODO extract this from url
           [
             {meta: 'tom', value: 1}, // 9AM
@@ -88,6 +114,15 @@
         series: final_series
       }, {
         stackBars: true,
+        axisX: {
+          labelInterpolationFnc: function(value) {
+            if (value < "12"){
+              return value + ":00 AM";
+            } else {
+              return value + ":00 PM";
+            }
+          }
+        },
         plugins: [
           Chartist.plugins.tooltip()
         ]
