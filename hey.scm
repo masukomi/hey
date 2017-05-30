@@ -217,7 +217,20 @@
 				(begin
 					; (print (sprintf "will delete event ~A" event-id))
 					; TODO: stick this in a transaction
-					(let (( s (prepare db "delete from events_people where person_id=?;")))
+					(let (
+						(persons-events (query fetch-all (sql db
+"select e.id, 
+( select count(*) from events_people  where events_people.event_id = e.id) epc
+from
+events e 
+inner join events_people ep on ep.event_id = e.id
+inner join people p on ep.person_id = p.id
+where epc = 1
+and p.id = ?
+group by 1;"
+								  ) person-id) 
+								)
+						( s (prepare db "delete from events_people where person_id=?;")))
 						(bind-parameters s person-id)
 						(step s)
 						(finalize s)
@@ -225,6 +238,17 @@
 						(bind-parameters s person-id)
 						(step s)
 						(finalize s)
+			 			(if (> (length persons-events) 0)
+			 				(begin
+			 					(let ((event-ids (map (lambda(x) (number->string (car x))) persons-events  )))
+									(set! s (prepare db "delete from events where id in (?);"))
+									(bind-parameters s (string-join event-ids ", "))
+									(step s)
+									(finalize s)
+								)
+							)
+							(print (sprintf "found no events involving just ~A" name))
+						)
 					)
 					(print (sprintf "~A is dead. Long live ~A!" name name))
 				)
