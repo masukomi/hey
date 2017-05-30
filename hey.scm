@@ -236,26 +236,27 @@
   )
 
 (define (graph args)
-	(if (null? args)
-		(print "No graph type specified. 
-Available graph types:
-* people-by-hour
-  * A stacked bar chart of the number of interrupts, by person, by hour
-    for the past 24hrs")
-		(cond 
-			((equal? "people-by-hour" (car args))
-				(begin ; generate the only supported graph type people-by-hour
-					; TODO modify query to use this where clause 
-					; once i figure out how to generate a the date at midnight yesterday
-					; where e.created_at BETWEEN '2017-05-25' AND 'now'
-					(let ((db (open-db)))
-						(let ( 
-							(db (open-db))
-							(series-data '())
-							(hours-hash (make-hash-table equal?))
-							(person->hour->value (make-hash-table equal?))
-							(previous-name "")
-							(rows (query fetch-rows (sql db 
+	(let ((known-report-types (list "people-by-hour")))
+		(if (null? args)
+			(print "No graph type specified. 
+	Available graph types:
+	* people-by-hour
+  	  * A stacked bar chart of the number of interrupts, by person, by hour
+    	for the past 24hrs")
+			(cond 
+				((equal? "people-by-hour" (car args))
+					(begin ; generate the only supported graph type people-by-hour
+						; TODO modify query to use this where clause 
+						; once i figure out how to generate a the date at midnight yesterday
+						; where e.created_at BETWEEN '2017-05-25' AND 'now'
+						(let ((db (open-db)))
+							(let ( 
+								(db (open-db))
+								(series-data '())
+								(hours-hash (make-hash-table equal?))
+								(person->hour->value (make-hash-table equal?))
+								(previous-name "")
+								(rows (query fetch-rows (sql db 
 "select 
   p.name,
   strftime('%H', e.created_at) hour, count(*) interrupts
@@ -274,69 +275,67 @@ order by p.name asc;"))))
 ; ( ("bob"  11 4)
 ;   ("mary" 13 2))
 
-							(do-list row rows
-								(begin ; make the new hash
-									;(print (sprintf "graph row: ~A - car: ~A" row (car row)))
-									(let ((row-hash (make-hash-table equal?))
-										  (person (car row))
-										  (hour (car (cdr row)))
-										  (interrupts (last row))
-										  )
-										(print (sprintf "person: ~A - hour: ~A interrupts: ~A" 
-														person hour interrupts))
-										; and the new entry
-										(hash-table-set! row-hash "meta" person)
-										(hash-table-set! row-hash "value" interrupts)
-										(if (not (list-includes (hash-table-keys person->hour->value) person))
-											(hash-table-set! person->hour->value
-															 person
-															 (make-hash-table equal?))
-											)
-										(hash-table-set! 
-										  (hash-table-ref person->hour->value person)
-										  hour
-										  interrupts)
-										(hash-table-set! hours-hash hour #t)
-									) ; END (let ((row-hash (make-hash-table equal?))
-								); END begin
-							); END do-list row rows
-							; OK Now we have the hashes for everyone's time
-							; let's fill in the hours they don't have
-							(print (sprintf "hours: ~A" (sort-strings< (hash-table-keys hours-hash))))
-							(do-list person (sort-strings< (hash-table-keys person->hour->value))
-								(print (sprintf "colating ~A" person))
-								(do-list hour (sort-strings< (hash-table-keys hours-hash))
-									(print (sprintf " - hour: ~A" hour))
-									(let ((value (if (list-includes 
-														(hash-table-keys 
-															(hash-table-ref 
-																person->hour->value person))
-														hour)
-													(hash-table-ref 
-													  (hash-table-ref
-														person->hour->value person)
-													  hour)
-													0)))
-										(let ((row-hash
-												(make-hash-table equal?)))
+								(do-list row rows
+									(begin ; make the new hash
+										;(print (sprintf "graph row: ~A - car: ~A" row (car row)))
+										(let ((row-hash (make-hash-table equal?))
+										  	  (person (car row))
+										  	  (hour (car (cdr row)))
+										  	  (interrupts (last row))
+										  	  )
+											(print (sprintf "person: ~A - hour: ~A interrupts: ~A" 
+															person hour interrupts))
+											; and the new entry
 											(hash-table-set! row-hash "meta" person)
-											(hash-table-set! row-hash "value" value)
-											(if (not (equal? person previous-name))
-												(begin
-													(set! series-data
-														(append series-data
-																(list (list row-hash))))
-													(set! previous-name person)
+											(hash-table-set! row-hash "value" interrupts)
+											(if (not (list-includes (hash-table-keys person->hour->value) person))
+												(hash-table-set! person->hour->value
+															 	 person
+															 	 (make-hash-table equal?))
 												)
-												(begin 
-													(let ((replacement 
-														 	 (append (last series-data) 
-																 	 (list row-hash))))
+											(hash-table-set! 
+										  	  (hash-table-ref person->hour->value person)
+										  	  hour
+										  	  interrupts)
+											(hash-table-set! hours-hash hour #t)
+										) ; END (let ((row-hash (make-hash-table equal?))
+									); END begin
+								); END do-list row rows
+								; OK Now we have the hashes for everyone's time
+								; let's fill in the hours they don't have
+								(do-list person (sort-strings< (hash-table-keys person->hour->value))
+									(do-list hour (sort-strings< (hash-table-keys hours-hash))
+										(let ((value (if (list-includes 
+															(hash-table-keys 
+																(hash-table-ref 
+																	person->hour->value person))
+															hour)
+														(hash-table-ref 
+													  	  (hash-table-ref
+															person->hour->value person)
+													  	  hour)
+														0)))
+											(let ((row-hash
+													(make-hash-table equal?)))
+												(hash-table-set! row-hash "meta" person)
+												(hash-table-set! row-hash "value" value)
+												(if (not (equal? person previous-name))
+													(begin
 														(set! series-data
-															(replace-nth 
-															(last-index series-data) ; nth
-															replacement ; replacement
-															series-data)
+															(append series-data
+																	(list (list row-hash))))
+														(set! previous-name person)
+													)
+													(begin 
+														(let ((replacement 
+														 	 	 (append (last series-data) 
+																 	 	 (list row-hash))))
+															(set! series-data
+																(replace-nth 
+																(last-index series-data) ; nth
+																replacement ; replacement
+																series-data)
+															)
 														)
 													)
 												)
@@ -344,21 +343,23 @@ order by p.name asc;"))))
 										)
 									)
 								)
-							)
-							; data's built
-							; let's generate the report
-							(open-url (generate-url 
-										"stacked_bar_chart"
-										(sort-strings< (hash-table-keys hours-hash))
-										series-data))
-						); END the big let
-					)
-				); END people-by-hour begin...
-			); END people-by-hour cond test
-			(else
-				(print (sprintf "unknown report type: ~A" (car args))))
-		); END of cond
-	); END of if
+								; data's built
+								; let's generate the report
+								(open-url (generate-url 
+											"stacked_bar_chart"
+											(sort-strings< (hash-table-keys hours-hash))
+											series-data))
+							); END the big let
+						)
+					); END people-by-hour begin...
+				); END people-by-hour cond test
+				(else
+					(print (sprintf "Unknown report type: ~A~%Available report types: ~A" 
+									(car args)
+									(string-join known-report-types ", "))))
+			); END of cond
+		); END of if
+	)
 )
 
 
