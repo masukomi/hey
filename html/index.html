@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hey!</title>
+    <link rel="stylesheet" type="text/css" href="css/LemonYellowSunWebfontsKit.css"/>
+    
+
+    <style>
+    body{
+        background: #EADBC4;
+        color: #5b4421;
+        cursor: auto;
+        font-style: normal;
+        font-weight: 400;
+        margin: 0;
+    }
+    .LemonYellowSun { font-family: LemonYellowSun; }
+    #logo{
+      max-width: 6rem;
+      display:block;
+    }
+    #logo_holder{
+
+    }
+    .page_header{
+      display: inline-block;
+      float: left;
+      margin-left: 1rem;
+    }
+    .header {
+      display: block;
+      height: 4rem;
+    }
+    .content{
+      margin-left: 12.5%;
+      margin-right: 12.5%;
+    }
+    code{
+      background: #cccccc;
+      display: inline-block;
+      border-radius: 3px;
+      padding: 2px;
+      font-family: monospace;
+      white-space: pre;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <span class="logo_holder">
+        <a href="https://interrupttracker.com"><img
+           src="images/hey_plus_text_icon.svg" id="logo" align="left" /></a>
+      </span>
+      <h2 class="LemonYellowSun page_header">Hey! Did you see this?</h3>
+    </div>
+    <div class="content">
+    <h1 class="LemonYellowSun">Hey! An Interruption Tracker for Mac users</h1>
+    <p class="LemonYellowSun">
+      "Hey! I've got a question."
+      <br />"Hey can you take a look at this?"
+      <br />"Hey, did you finish that thing?"
+      <br />"Hey!"
+    </p>
+
+    <h2 class="LemonYellowSun">Sound familiar?</h2>
+    <p>
+Interested in tracking just how many times you're interrupted and by who?
+    </p>
+
+    <p>Well hey, maybe <span class="LemonYellowSun">Hey!</span> is the tool for 
+    you.</p>
+
+    <p>When someone walks up to you and starts talking, breaks your concentration with
+yet another slack message, or diety forbid, actually calls your phone...just
+type <code>hey &lt;person's name&gt;</code> on the command line.
+	</p>
+
+	<p>That's it. An entry in a local db will be created for the event, who did
+	it, and when it happened.</p>
+
+    <p>Want to start tracking _why_ people are interrupting you? After the interruption 
+you can, optionally, list and tag the events, leave a note, 
+or generate reports graphing all your past interruptions.</p>
+
+    <p>Track it for long enough and patterns are sure to emerge. Maybe you'll find 
+that a little documentation could save you hours a week. Maybe you'll find that
+one person that's devouring more time than anyone else and discuss a better way to
+handle things.</p>
+
+    <h2 class="LemonYellowSun">Reports</h2>
+    <p>So far, we've got 2 reports, with more on the way:</p>
+    <p>First, a stacked bar chart showing interruptions, by person,
+    by hour since yesterday at midnight. You can check out an example of it
+    <a href="https://stacked_bar_chart.html">here</a>. 
+    </p>
+    <p>To invoke it just type 
+    <code>hey graph people-by-hour</code></p>
+    <p>Second, we've got the old school command line report that looks like
+    this:
+    <br /><code>Recent interrupts: Chronological order
+Starting at midnight yesterday. 
+
+ID | Who       | When                 | Tags
+2. | Bob, Mary | 4/12/17 14:23        | meeting, scheduled
+3. | Bob       | 4/12/17 14:26        |
+4. | Sam       | 4/12/17 16:11        | question 
+5. | Mary      | 4/12/18 09:22        | task list
+</code></p>
+    <p>To invoke that just type <code>hey graph</code></p>
+
+    <h2 class="LemonYellowSun">Questions</h2>
+    <h3 class="LemonYellowSun">How Much?</h3>
+    <p>It's free!</p>
+
+    <h3 class="LemonYellowSun">Why not a GUI app?</h3>
+    <p>Actually, I've got one all sketched out. I even paid someone else to 
+    write it, but they turned out to be incompetent and never gave me any
+    working code despite going over budget.</p>
+    <p>So, I'll get there eventually, but in the meantime I needed to throw
+    something together quickly that I could use to get a handle on my constant
+    stream of interruptions, and this was something I could through together
+    "quickly". Unfortunately it's turned into a surprisingly deep rabbit-hole
+    where I say "oh, I could just add this one little thing." far too many
+    times.</p>
+
+
+    <h2 class="LemonYellowSun">Installation</h2>
+    <h3 class="LemonYellowSun">Mac Users</h3>
+    <p>You can <a href="downloads/hey.dmg">download the latest version here.</a>
+    <br />Once you've got that open your Teminal app, drag the
+    <code>installer.sh</code> file into the terminal window, hit enter, and
+    follow the instructions. </p>
+
+    <h3 class="LemonYellowSun">Geeks On Other Platforms</h3>
+    <p>Hey is written in <a href="https://www.call-cc.org/">Chicken Scheme</a>, 
+    which generates standard C files. As a
+    result, you should be able to compile it on most systems. Once you've got
+    Chicken Scheme installed, try running the </p>
+
+    <h3 class="LemonYellowSun">Everyone Else</h3>
+    <p>Sorry, this is a free, open source project made in stolen moments. If
+    you'd like to see your system supported... Find a friendly neighborhood geek
+    who likes Scheme and convince them to contribute.</p>
+
+    <h2 class="LemonYellowSun">Source Code</h2>
+    <p><span class="LemonYellowSun">Hey!</span> is an open source app written in 
+    Chicken Scheme. You can <a href="https://github.com/masukomi/hey">find the
+      source code on GitHub</a>. Pull requests are happily accepted. </p>
+    </div>
+  </body>
+</html>
+
