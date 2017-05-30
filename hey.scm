@@ -333,8 +333,8 @@ order by p.name asc;"))))
 										  	  (hour (car (cdr row)))
 										  	  (interrupts (last row))
 										  	  )
-											(print (sprintf "person: ~A - hour: ~A interrupts: ~A" 
-															person hour interrupts))
+											; (print (sprintf "person: ~A - hour: ~A interrupts: ~A" 
+											; 				person hour interrupts))
 											; and the new entry
 											(hash-table-set! row-hash "meta" person)
 											(hash-table-set! row-hash "value" interrupts)
@@ -507,7 +507,7 @@ order by p.name asc;"))))
   )
 (define (open-url url)
 	; (print url)
-	(system (sprintf "open ~A" url))
+	(system (sprintf "open \"~A\"" url))
 	)
 
 
