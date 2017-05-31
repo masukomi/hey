@@ -28,7 +28,21 @@ handle things.
 ## Instructions
 
 ### Installation
-TODO: add installation instructions
+#### Mac Users
+You can [download the latest version here.](https://interrupttracker.com/downloads/hey.dmg)
+Open that up and follow the instructions in the README.md
+
+#### Geeks on other platforms
+Hey is written in [Chicken Scheme](https://www.call-cc.org/), 
+which generates standard C files. As a
+result, you should be able to compile it on most systems. Once you've 
+cloned the repo and installed Chicken Scheme, try running the `build.sh` and 
+tell it you want to install `libraries`
+
+After that... Well, I'm happy to help but I only use macOS. 
+
+#### Everyone Else
+Sorry. :(
 
 ### Usage
 
@@ -56,6 +70,14 @@ ID | Who       | When                 | Tags
 5. | Mary      | 4/12/18 09:22        | task list
 ```
 
+#### Reporting on recent events
+`hey graph` will list all graphing options
+
+`hey graph people-by-hour`
+
+Collates your data, and loads it in a pretty graph on
+InterruptTracker.com for you. You can see an example 
+[here](https://interrupttracker.com/stacked_bar_chart.html)
 
 
 #### Tag an event
@@ -88,6 +110,16 @@ comment with your new one.
 
 Permanently deletes the specified record. There is no undo.
 
+#### Delete accidental people
+`hey kill <name>`
+
+_(Note: No humans will be harmed in the execution of this
+command.)_
+
+Deletes that person from your database, and removes them from
+any events. If there are events that _only_ involved that
+person, they will also be deleted.
+
 #### Exporting Data
 **NOT IMPLEMENTED**  
 
@@ -109,11 +141,9 @@ the path to your SQLite file.
 
 For example:
 
-```
-{
-  "HEY_DB": "~/path/to/my/hey.test.db"
-}
-```
+    {
+      "HEY_DB": "~/path/to/my/hey.test.db"
+    }
 
 If you are building `hey` from source and not using the shell script created by
 the installer then you can set the `HEY_DB` environment variable to a path to
