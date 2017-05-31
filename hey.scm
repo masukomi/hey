@@ -1,10 +1,16 @@
-; commands that must be supported
-; hey <person(s)>
-; hey
-; hey tag <id>
-; hey retag <id>
-; hey delete <id>
-; hey data
+; Welcome to Hey!
+; this started out as a quick hack, and just kept growing
+; as a result, it could use some SERIOUS refactoring at this point.
+; Just, general cleanup, breaking functions down into smaller pieces, 
+; moving functions out into separate files, and stuff like that.
+;
+; If you're looking for something more specific to work on 
+; check out the Issues Tracker: https://github.com/masukomi/hey/issues
+; and drop me a line on Twitter. I'm @masukomi
+; Se vi parolas esperanton mi estas @praktiku sur la Twitter.
+;
+; Copyright 2017 Kay Rhodes. Distributed under the MIT License
+; https://github.com/masukomi/hey/blob/master/LICENSE.md
 (require-extension sql-de-lite)
 (require-extension srfi-13)
 (require-extension srfi-1)
