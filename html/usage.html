@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>How to use Hey!</title>
+    <link rel="stylesheet" type="text/css" href="css/LemonYellowSunWebfontsKit.css"/>
+    
+
+    <style>
+    body{
+        background: #EADBC4;
+        color: #5b4421;
+        cursor: auto;
+        font-style: normal;
+        font-weight: 400;
+        margin: 0;
+    }
+    h1, h2, h3, h4, .LemonYellowSun { font-family: LemonYellowSun; }
+    #logo{
+      max-width: 6rem;
+      display:block;
+    }
+    #logo_holder{
+
+    }
+    .page_header{
+      display: inline-block;
+      float: left;
+      margin-left: 1rem;
+    }
+    .header {
+      display: block;
+      height: 4rem;
+    }
+    .content{
+      margin-left: 12.5%;
+      margin-right: 12.5%;
+    }
+    code{
+      background: #cccccc;
+      display: inline-block;
+      border-radius: 3px;
+      padding: 2px;
+      font-family: monospace;
+      white-space: pre;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <span class="logo_holder">
+        <a href="https://interrupttracker.com"><img
+           src="images/hey_plus_text_icon.svg" id="logo" align="left" /></a>
+      </span>
+      <h2 class="LemonYellowSun page_header">Hey! Did you see this?</h3>
+    </div>
+    <div class="content">
+    <h1 class="LemonYellowSun">Hey! An Interruption Tracker for Mac users</h1>
+
+    <h2 class="LemonYellowSun">Usage</h2>
+
+<h4 id="recordanevent">Record an event</h4>
+
+<p><code>hey &lt;person(s)&gt;</code> </p>
+
+<p><code>&lt;person(s)&gt;</code> is a space separated list of one or more
+people&#8217;s names. </p>
+
+<p>Note: all names are downcased in the database to save worrying about multiple
+entries when you accidentally type &#8220;bob&#8221; one time and &#8220;Bob&#8221; the next.</p>
+
+<h4 id="viewingrecentevents">Viewing recent events</h4>
+
+<p><code>hey list</code></p>
+<pre><code class="(null)">Recent interrupts: Chronological order
+Starting at midnight yesterday. 
+
+ID | Who       | When                 | Tags
+2. | Bob, Mary | 4/12/17 14:23        | meeting, scheduled
+3. | Bob       | 4/12/17 14:26        |
+4. | Sam       | 4/12/17 16:11        | question 
+5. | Mary      | 4/12/18 09:22        | task list</code></pre>
+
+<h4 id="reportingonrecentevents">Reporting on recent events</h4>
+
+<p><code>hey graph</code> will list all graphing options</p>
+
+<p><code>hey graph people-by-hour</code></p>
+
+<p>Collates your data, and loads it in a pretty graph on
+InterruptTracker.com for you. You can see an example
+<a href="https://interrupttracker.com/stacked_bar_chart.html">here</a></p>
+
+<h4 id="taganevent">Tag an event</h4>
+
+<p><code>hey tag &lt;event id&gt; &lt;tag(s)&gt;</code><br/>
+<code>hey retag &lt;event id&gt; &lt;tag(s)&gt;</code></p>
+
+<p><code>&lt;event id&gt;</code> is one of the ids shown by <code>hey list</code> or <code>hey data</code></p>
+
+<p><code>&lt;tag(s)&gt;</code> is a space separated list of tags to associated with this event.</p>
+
+<p>If you <code>tag</code> the same event twice then the new tags will be appended to the list.</p>
+
+<p>If you <code>retag</code> an event the new list will replace the old one</p>
+
+<h4 id="commentonanevent">Comment on an event</h4>
+
+<p><code>hey comment &lt;event id&gt; &lt;my comment string&gt;</code></p>
+
+<p><code>&lt;event id&gt;</code> is one of the ids shown by <code>hey list</code> or <code>hey data</code></p>
+
+<p><code>&lt;my comment string&gt;</code> is&#8230; your comment. Doesn&#8217;t have to be in quotes. Ends
+when you hit enter.</p>
+
+<p>Note if you comment on the same event twice it will replace the existing
+comment with your new one.</p>
+
+<h4 id="deleteaccidentalinterrupts">Delete accidental interrupts</h4>
+
+<p><code>hey delete &lt;event id&gt;</code></p>
+
+<p><code>&lt;event id&gt;</code> is one of the ids shown by <code>hey list</code> or <code>hey data</code></p>
+
+<p>Permanently deletes the specified record. There is no undo.</p>
+
+<h4 id="deleteaccidentalpeople">Delete accidental people</h4>
+
+<p><code>hey kill &lt;name&gt;</code></p>
+
+<p><em>(Note: No humans will be harmed in the execution of this
+command.)</em></p>
+
+<p>Deletes that person from your database, and removes them from
+any events. If there are events that <em>only</em> involved that
+person, they will also be deleted.</p>
+
+<h4 id="exportingdata">Exporting Data</h4>
+
+<p><strong>NOT IMPLEMENTED</strong> </p>
+
+<p><code>hey data</code></p>
+
+<p>To be determined. YAML? TOML? JSON? </p>
+
+<p>Whatever format it is should be something that other command line tools can
+ingest easily. Additionally we may want a simple query language or something
+similar to allow you to export just the data for a specific person, or date
+range.</p>
+
+    </div>
+  </body>
+</html>
+
