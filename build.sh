@@ -2,7 +2,7 @@
 
 deploy_type=$1
 if [ "$deploy_type" = "" ]; then
-	echo "deploy type? [libraries|local|gui]: "
+	echo "deploy type? [libraries|local|gui|dmg]: "
 	read deploy_type
 fi
 
@@ -57,7 +57,8 @@ elif [ "$deploy_type" = "gui" ]; then
 		cp -r hey.app /Applications/
 		echo "replaced."
 	fi
-
+elif [ "$deploy_type" = "dmg" ]; then
+  appdmg appdmg.json html/downloads/hey.dmg
 fi
 
 
