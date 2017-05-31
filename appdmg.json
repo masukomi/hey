@@ -1,0 +1,17 @@
+{
+
+  "title": "Hey!",
+  "icon": "images/iconset.icns",
+  "background": "images/dmg_background.png",
+  "icon-size": 80,
+
+  "contents": [
+
+    { "x": 125, "y": 60, "type": "file", "path": "misc/README.md" },
+    { "x": 275, "y": 60, "type": "file", "path": "installer.sh" },
+    { "x": 125, "y": 200, "type": "file", "path": "hey.app" },
+    { "x": 275, "y": 200, "type": "link", "path": "/Applications" }
+
+  ]
+
+}
