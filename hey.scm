@@ -91,16 +91,10 @@
 )
 
 (define (open-db)
-	; look for it in dropbox
-	; look for it in local storage location
-	; if you don't find it, create it
 	(let ((config (get-config)))
 		(let ((hey-db (hash-table-ref config "HEY_DB")))
-			; (print (sprintf "config-says db at: ~A " hey-db))
-			(open-database (pathname-expand hey-db))
-		)
-	)
-)
+			(open-database (pathname-expand hey-db)))))
+
 (define (event-has-tag? event-id tag-id db)
 	(let ((count 
 			 (query 
