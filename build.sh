@@ -41,6 +41,7 @@ elif [ "$deploy_type" = "local" ]; then
 elif [ "$deploy_type" = "gui" ]; then
 	# let's just make sure listicles is good and fresh
 	csc -emit-all-import-libraries -explicit-use listicles.scm
+	csc -emit-all-import-libraries -explicit-use interrupt-database.scm
 	rm -rf hey.app
 	csc -deploy -gui hey.scm
 	cp listicles hey.app/Contents/MacOS/
