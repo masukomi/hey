@@ -292,6 +292,16 @@ group by 1;"
 (define (data)
 	(print "asked to provide data")
   )
+(define (version)
+	(print "Hey version 0.1
+Copyright 2017 Kay Rhodes
+Distributed under the MIT License.
+Written in Chicken Scheme."))
+(define (help)
+	(print "Usage instructions are at https://interrupttracker.com/usage.html
+General info is available at https://interrupttracker.com/
+
+I'm @masukomi on Twitter and happy to help there."))
 
 (define (graph args)
 	(let ((known-report-types (list "people-by-hour")))
@@ -481,6 +491,9 @@ order by p.name asc;"))))
 		(cond
 			((null? command)   (list-events))
 			((equal? command "list")   (list-events))
+			((equal? command "--version")   (version))
+			((equal? command "-v")   (version))
+			((equal? command "help") (help))
 			((equal? command "tag")    (tag          (second args) (cdr (cdr args))))
 			((equal? command "comment")(comment      (second args) (string-join (cdr (cdr args)) " ")))
 			((equal? command "retag")  (retag        (second args) (cdr (cdr args))))
@@ -508,7 +521,7 @@ order by p.name asc;"))))
 		  (encoded-labels (json->uri-string labels))
 		  (encoded-series (json->uri-string series))
 		  )
-	  (sprintf "http://interrupttracker.com/~A.html?labels=~A&series=~A"
+	  (sprintf "https://interrupttracker.com/~A.html?labels=~A&series=~A"
 		graph-type
 		encoded-labels
 		encoded-series)
@@ -521,7 +534,17 @@ order by p.name asc;"))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(define recognized-commands '("tag" "retag" "delete" "kill" "data" "list" "comment" "graph"))
+(define recognized-commands '("tag" 
+							  "retag" 
+							  "delete" 
+							  "kill" 
+							  "data" 
+							  "list" 
+							  "comment" 
+							  "graph"
+							  "--version"
+							  "-v"
+							  "help"))
 (define (main args)
 	; (print (sprintf "main args: ~A" args))
 	(let (	(downcased-args (downcase-list args)))
