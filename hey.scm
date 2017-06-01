@@ -50,17 +50,34 @@
 	  )
   )
 
-(define (create-entry people db)
-	; (print (sprintf "in create-entry for ~A" people))
-	(let ((people-ids '()))
-		(do-list name people 
-			(set! people-ids (cons 
-						(find-or-create-person name db)
-						people-ids)))
+(define (create-entry people-and-tags db)
+	(let ((people '())
+		  (people-ids '())
+		  (includes-tags #f)
+		  (tags '()))
+		(do-list name people-and-tags
+			(if (and (not (equal? "+tag" name))
+					 (not includes-tags))
+				(begin
+					(set! people-ids (cons 
+							(find-or-create-person name db)
+							people-ids))
+					(set! people (cons name people)))
+				(if (not (equal? "+tag" name)) 
+				  (set! tags (cons name tags))
+				  (set! includes-tags #t))
+			)
+		)
+			
 		; we now have a list of people ids
 		(create-event people-ids db)
+		(print (sprintf "Gotcha. New ~A event" (string-join people ", ")))
+		(if (not (null? tags))
+			(let ((event-id (get-last-event-id db)))
+				(tag-event tags event-id db)
+			  )
+		  )
 	)
-	(print (sprintf "Gotcha. ~A" (string-join people ", ")))
 )
 
 
