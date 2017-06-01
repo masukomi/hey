@@ -1,5 +1,6 @@
 (module interrupt-database
   (
+   load-db-at-path
    create-tag
    find-id-of-person
    create-person
@@ -8,12 +9,23 @@
    create-event
    find-event-by-id
    get-last-event-id
+   join-tag-to-event
+   join-tags-to-event
+   event-has-tag?
    join-person-to-event
+   comment-on-event
   )
   (import chicken)
   (import scheme)
   (require-extension sql-de-lite)
   (use loops)
+
+  ;----------------------------------------------------------------------------
+  ; core
+  (define (load-db-at-path path)
+    (open-database path))
+
+
   ;----------------------------------------------------------------------------
   ; tags
   (define (find-id-of-tag name db)
@@ -28,6 +40,28 @@
     (finalize s)
     (find-id-of-tag name db)
     )
+
+  (define (join-tag-to-event tag-id event-id db)
+    (if (not (event-has-tag? event-id tag-id db))
+      (begin 
+        (let (( s (prepare db "insert into events_tags (event_id, tag_id) values (?, ?);")))
+          (bind-parameters s event-id tag-id)
+          (step s)
+          (finalize s)))))
+
+  (define (join-tags-to-event tag-ids event-id db)
+    (do-list tag-id tag-ids
+     (join-tag-to-event tag-id event-id db)))
+
+
+  (define (event-has-tag? event-id tag-id db)
+    (let ((count 
+         (query 
+            fetch-value
+           (sql db "SELECT count(*) FROM events_tags where event_id = ? and tag_id = ?;") 
+           event-id tag-id)))
+      (> count 0)))
+
   ;----------------------------------------------------------------------------
   ; people
   (define (find-id-of-person name db)
@@ -70,5 +104,10 @@
         (if (string? id) (string->number id) id) )
       (get-last-event-id db)))
 
+  (define (comment-on-event comment-string event-id db)
+    (define s (prepare db "update events set description=? where id = ?;"))
+    (bind-parameters s comment-string event-id)
+    (step s)
+    (finalize s))
 
 )

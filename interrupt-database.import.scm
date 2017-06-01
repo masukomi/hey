@@ -4,7 +4,8 @@
 (##sys#register-compiled-module
   'interrupt-database
   (list)
-  '((create-tag . interrupt-database#create-tag)
+  '((load-db-at-path . interrupt-database#load-db-at-path)
+    (create-tag . interrupt-database#create-tag)
     (find-id-of-person . interrupt-database#find-id-of-person)
     (create-person . interrupt-database#create-person)
     (find-person-by-name . interrupt-database#find-person-by-name)
@@ -12,7 +13,11 @@
     (create-event . interrupt-database#create-event)
     (find-event-by-id . interrupt-database#find-event-by-id)
     (get-last-event-id . interrupt-database#get-last-event-id)
-    (join-person-to-event . interrupt-database#join-person-to-event))
+    (join-tag-to-event . interrupt-database#join-tag-to-event)
+    (join-tags-to-event . interrupt-database#join-tags-to-event)
+    (event-has-tag? . interrupt-database#event-has-tag?)
+    (join-person-to-event . interrupt-database#join-person-to-event)
+    (comment-on-event . interrupt-database#comment-on-event))
   (list)
   (list))
 

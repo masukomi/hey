@@ -91,33 +91,9 @@
 )
 
 (define (open-db)
-	(let ((config (get-config)))
-		(let ((hey-db (hash-table-ref config "HEY_DB")))
-			(open-database (pathname-expand hey-db)))))
-
-(define (event-has-tag? event-id tag-id db)
-	(let ((count 
-			 (query 
-			 	 fetch-value
-			 	(sql db "SELECT count(*) FROM events_tags where event_id = ? and tag_id = ?;") 
-			 	event-id tag-id)))
-		(> count 0))
-  )
-(define (join-tag-to-event tag-id event-id db)
-	(if (not (event-has-tag? event-id tag-id db))
-		(begin 
-			(let (( s (prepare db "insert into events_tags (event_id, tag_id) values (?, ?);")))
-				(bind-parameters s event-id tag-id)
-				(step s)
-				(finalize s)
-			)
-		)
-	)
-  )
-
-(define (join-tags-to-event tag-ids event-id db)
-	(do-list tag-id tag-ids
-			 (join-tag-to-event tag-id event-id db)))
+    (let ((config (get-config)))
+      (let ((hey-db (hash-table-ref config "HEY_DB")))
+        (load-db-at-path (pathname-expand hey-db)))))
 
 (define (tag-event tags event-id db)
 	(let ((tag-ids '()))
@@ -128,12 +104,7 @@
 		(join-tags-to-event tag-ids event-id db)
 	)
   )
-(define (comment-on-event comment-string event-id db)
-			(define s (prepare db "update events set description=? where id = ?;"))
-			(bind-parameters s comment-string event-id)
-			(step s)
-			(finalize s)
-  )
+
 (define (downcase-list items)
 	(map (lambda (item) (string-downcase item)) items)
 )
