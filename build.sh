@@ -45,6 +45,7 @@ elif [ "$deploy_type" = "gui" ]; then
 	rm -rf hey.app
 	csc -deploy -gui hey.scm
 	cp listicles hey.app/Contents/MacOS/
+	cp interrupt-database hey.app/Contents/MacOS/
 	cp default.db hey.app/Contents/MacOS/
 	cp -r hey_libs/* hey.app/Contents/MacOS/
 	rm hey.app/Contents/Resources/CHICKEN.icns
