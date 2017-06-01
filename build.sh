@@ -58,6 +58,7 @@ elif [ "$deploy_type" = "gui" ]; then
 		echo "replaced."
 	fi
 elif [ "$deploy_type" = "dmg" ]; then
+  rm html/downloads/hey.dmg
   appdmg appdmg.json html/downloads/hey.dmg
 fi
 
