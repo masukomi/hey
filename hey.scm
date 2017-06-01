@@ -103,6 +103,7 @@
 			 				 	 tag-ids)))
 		(join-tags-to-event tag-ids event-id db)
 	)
+	(print (sprintf "Gotcha. Tagged with ~A" (string-join tags ", ")))
   )
 
 (define (downcase-list items)
