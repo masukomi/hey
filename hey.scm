@@ -78,6 +78,7 @@
 		; we now have a list of people ids
 		(create-event people-ids db)
 	)
+	(print (sprintf "Gotcha. ~A" (string-join people ", ")))
 )
 
 (define (create-event people-ids db)
