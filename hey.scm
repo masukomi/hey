@@ -63,26 +63,6 @@
 	(print (sprintf "Gotcha. ~A" (string-join people ", ")))
 )
 
-(define (create-event people-ids db)
-	(define s (prepare db "INSERT INTO events DEFAULT VALUES"))
-	(exec s)
-	(let ((event-id (get-last-event-id db)))
-		(do-list pid people-ids 
-			(join-person-to-event pid event-id db)
-		)
-	)
-)
-
-(define (join-person-to-event pid eid db)
-	(define s (prepare db "insert into events_people (event_id, person_id) values (?, ?);"))
-	(bind-parameters s eid pid )
-	(step s)
-	(finalize s)
-)
-
-(define (get-last-event-id db)
-	(query fetch-value (sql db "SELECT id FROM events order by id desc limit 1;"))
-)
 
 (define (find-event-by-id id db)
 	(if (not (equal? id "last"))
