@@ -9,6 +9,7 @@
     (create-person . interrupt-database#create-person)
     (create-tag . interrupt-database#create-tag)
     (create-event . interrupt-database#create-event)
+    (find-event-by-id . interrupt-database#find-event-by-id)
     (get-last-event-id . interrupt-database#get-last-event-id)
     (join-person-to-event . interrupt-database#join-person-to-event))
   (list)

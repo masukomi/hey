@@ -5,6 +5,7 @@
    create-person
    create-tag
    create-event
+   find-event-by-id
    get-last-event-id
    join-person-to-event
   )
@@ -12,7 +13,8 @@
   (import scheme)
   (require-extension sql-de-lite)
   (use loops)
-
+  ;----------------------------------------------------------------------------
+  ; tags
   (define (find-id-of-tag name db)
     (query 
       fetch-value 
@@ -25,7 +27,8 @@
     (finalize s)
     (find-id-of-tag name db)
     )
-
+  ;----------------------------------------------------------------------------
+  ; people
   (define (find-id-of-person name db)
     (query 
          fetch-value 
@@ -39,6 +42,8 @@
     (finalize s)
     (find-id-of-person name db))
 
+  ;----------------------------------------------------------------------------
+  ; events
   (define (create-event people-ids db)
     (define s (prepare db "INSERT INTO events DEFAULT VALUES"))
     (exec s)
@@ -54,5 +59,12 @@
     (bind-parameters s eid pid )
     (step s)
     (finalize s))
+  
+  (define (find-event-by-id id db)
+    (if (not (equal? id "last"))
+      (query fetch-value (sql db "SELECT id FROM events where id = ?;") 
+        (if (string? id) (string->number id) id) )
+      (get-last-event-id db)))
+
 
 )
