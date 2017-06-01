@@ -4,10 +4,11 @@
 (##sys#register-compiled-module
   'interrupt-database
   (list)
-  '((find-id-of-person . interrupt-database#find-id-of-person)
-    (find-id-of-tag . interrupt-database#find-id-of-tag)
+  '((create-tag . interrupt-database#create-tag)
+    (find-id-of-person . interrupt-database#find-id-of-person)
     (create-person . interrupt-database#create-person)
-    (create-tag . interrupt-database#create-tag)
+    (find-person-by-name . interrupt-database#find-person-by-name)
+    (find-id-of-tag . interrupt-database#find-id-of-tag)
     (create-event . interrupt-database#create-event)
     (find-event-by-id . interrupt-database#find-event-by-id)
     (get-last-event-id . interrupt-database#get-last-event-id)

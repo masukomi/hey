@@ -1,9 +1,10 @@
 (module interrupt-database
   (
-   find-id-of-person
-   find-id-of-tag
-   create-person
    create-tag
+   find-id-of-person
+   create-person
+   find-person-by-name
+   find-id-of-tag
    create-event
    find-event-by-id
    get-last-event-id
@@ -41,6 +42,9 @@
     (step s)
     (finalize s)
     (find-id-of-person name db))
+
+  (define (find-person-by-name name db)
+    (query fetch-value (sql db "SELECT id FROM people where name = ?;") name))
 
   ;----------------------------------------------------------------------------
   ; events

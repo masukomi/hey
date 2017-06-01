@@ -64,15 +64,6 @@
 )
 
 
-(define (find-event-by-id id db)
-	(if (not (equal? id "last"))
-		(query fetch-value (sql db "SELECT id FROM events where id = ?;") 
-			(if (string? id) (string->number id) id) )
-		(query fetch-value (sql db "SELECT id FROM events ORDER BY created_at DESC LIMIT 1;")))
-)
-(define (find-person-by-name name db)
-	(query fetch-value (sql db "SELECT id FROM people where name = ?;") name))
-
 (define (env-or-default-db-path)
 	(let ((env-db (get-environment-variable "HEY_DB") ))
 		; (print (sprintf "env-db: ~A    || expanded: ~A" env-db (pathname-expand env-db)))
