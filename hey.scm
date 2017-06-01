@@ -22,20 +22,19 @@
 ; (require-extension mdcd)
 (use loops)
 (use posix)
-(use listicles)
 (use fmt)
 (use extras)
 (use utils)
 (use ports)
+(use listicles)
+(use interrupt-database)
 ; SET UP FUNCTIONS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; CORE FUNCTIONALITY
 (define (find-or-create-person name db)
 	; returns (name, id) list
 	; (print (sprintf "find-or-create-person ~A" name))
-	(let (( id (query 
-				 fetch-value 
-				 (sql db "SELECT id FROM people WHERE name=? limit 1;") name)))
+	(let (( id (find-id-of-person name db)))
 		(if (not (equal? id #f))
 		  id
 		  (create-person name db))
@@ -51,9 +50,7 @@
   )
 ;TODO: combine find-or-create-tag with find-or-create-person
 (define (find-or-create-tag name db)
-	(let (( id (query 
-				 fetch-value 
-				 (sql db "SELECT id FROM tags WHERE name=? limit 1;") name)))
+	(let (( id (find-id-of-tag name db)))
 		(if (not (equal? id #f))
 		  id
 		  (create-tag name db))
