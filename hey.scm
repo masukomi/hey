@@ -41,13 +41,6 @@
 	  )
 )
 
-(define (create-person name db)
-	(define s (prepare db "insert into people (name) values (?);"))
-	(bind-parameters s name)
-	(step s)
-	(finalize s)
-	(find-or-create-person name db)
-  )
 ;TODO: combine find-or-create-tag with find-or-create-person
 (define (find-or-create-tag name db)
 	(let (( id (find-id-of-tag name db)))

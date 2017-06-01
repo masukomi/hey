@@ -5,7 +5,8 @@
   'interrupt-database
   (list)
   '((find-id-of-person . interrupt-database#find-id-of-person)
-    (find-id-of-tag . interrupt-database#find-id-of-tag))
+    (find-id-of-tag . interrupt-database#find-id-of-tag)
+    (create-person . interrupt-database#create-person))
   (list)
   (list))
 

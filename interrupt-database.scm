@@ -2,6 +2,7 @@
   (
    find-id-of-person
    find-id-of-tag
+   create-person
   )
   (import chicken)
   (import scheme)
@@ -17,4 +18,11 @@
          fetch-value 
          (sql db "SELECT id FROM people WHERE name=? limit 1;") 
            name))
+  
+  (define (create-person name db)
+    (define s (prepare db "insert into people (name) values (?);"))
+    (bind-parameters s name)
+    (step s)
+    (finalize s)
+    (find-id-of-person name db))
 )
