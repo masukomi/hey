@@ -6,7 +6,8 @@
   (list)
   '((find-id-of-person . interrupt-database#find-id-of-person)
     (find-id-of-tag . interrupt-database#find-id-of-tag)
-    (create-person . interrupt-database#create-person))
+    (create-person . interrupt-database#create-person)
+    (create-tag . interrupt-database#create-tag))
   (list)
   (list))
 

@@ -49,14 +49,6 @@
 		  (create-tag name db))
 	  )
   )
-;TODO: combine create-tage with create-person
-(define (create-tag name db)
-	(define s (prepare db "insert into tags (name) values (?);"))
-	(bind-parameters s name)
-	(step s)
-	(finalize s)
-	(find-or-create-tag name db)
-  )
 
 (define (create-entry people db)
 	; (print (sprintf "in create-entry for ~A" people))
