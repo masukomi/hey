@@ -230,7 +230,7 @@ group by 1;"
 	(print "asked to provide data")
   )
 (define (version)
-	(print "Hey version 0.1
+	(print "Hey version 0.2.0
 Copyright 2017 Kay Rhodes
 Distributed under the MIT License.
 Written in Chicken Scheme."))
