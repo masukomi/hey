@@ -60,13 +60,49 @@
 
 <h4 id="recordanevent">Record an event</h4>
 
-<p><code>hey &lt;person(s)&gt;</code> </p>
+<p><code>hey &lt;names&gt;</code> </p>
 
-<p><code>&lt;person(s)&gt;</code> is a space separated list of one or more
+<p><code>&lt;names&gt;</code> is a space separated list of one or more
 people&#8217;s names. </p>
 
 <p>Note: all names are downcased in the database to save worrying about multiple
 entries when you accidentally type &#8220;bob&#8221; one time and &#8220;Bob&#8221; the next.</p>
+
+<h4 id="taganevent">Tag an event</h4>
+
+<p><code>hey tag &lt;event id&gt; &lt;tags&gt;</code><br/>
+<code>hey retag &lt;event id&gt; &lt;tags&gt;</code></p>
+
+<p><code>&lt;event id&gt;</code> is usually <code>last</code> (to tag the most
+recent event) but if you need 
+to tag a different one that was shown by <code>hey list</code> or <code>hey data</code>
+you can enter its id.</p>
+
+<p><code>&lt;tags&gt;</code> is a space separated list of tags to associated with this event.</p>
+
+<p>If you <code>tag</code> the same event twice then the new tags will be appended to the list.</p>
+
+<p>If you <code>retag</code> an event the new list will replace the old one</p>
+
+
+
+
+<h4 id="record_and_tag">Record an event and tag it at the same time</h4>
+<p>Most of the time you create an event as it happens, and you don't know what it's
+going to be about yet, so you create it, then tag it later. But sometimes you
+create it just <i>after</i> it happened and you <i>do</i> know what it was
+about.</p>
+<p>
+<code>hey &lt;names&gt; +tag &lt;tags&gt;</code>
+  </p>
+  <p>
+<code>&lt;names&gt;</code> is a space separated list of one or more
+people's names.
+  </p>
+  <p>
+<code>&lt;tags&gt;</code> is a space separated list of tags to associated with this event.
+  </p>
+
 
 <h4 id="viewingrecentevents">Viewing recent events</h4>
 
@@ -89,19 +125,6 @@ ID | Who       | When                 | Tags
 <p>Collates your data, and loads it in a pretty graph on
 InterruptTracker.com for you. You can see an example
 <a href="https://interrupttracker.com/stacked_bar_chart.html">here</a></p>
-
-<h4 id="taganevent">Tag an event</h4>
-
-<p><code>hey tag &lt;event id&gt; &lt;tag(s)&gt;</code><br/>
-<code>hey retag &lt;event id&gt; &lt;tag(s)&gt;</code></p>
-
-<p><code>&lt;event id&gt;</code> is one of the ids shown by <code>hey list</code> or <code>hey data</code></p>
-
-<p><code>&lt;tag(s)&gt;</code> is a space separated list of tags to associated with this event.</p>
-
-<p>If you <code>tag</code> the same event twice then the new tags will be appended to the list.</p>
-
-<p>If you <code>retag</code> an event the new list will replace the old one</p>
 
 <h4 id="commentonanevent">Comment on an event</h4>
 

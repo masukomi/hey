@@ -48,13 +48,25 @@ Sorry. :(
 
 #### Record an event
 
-`hey <person(s)>` 
+`hey <names>` 
 
-`<person(s)>` is a space separated list of one or more
+`<names>` is a space separated list of one or more
 people's names. 
 
 Note: all names are downcased in the database to save worrying about multiple
 entries when you accidentally type "bob" one time and "Bob" the next.
+
+#### Record an event and tag it at the same time
+Most of the time you create an event as it happens, and you don't know what it's
+going to be about yet, so you create it, then tag it later. But sometimes you
+create it just _after_ it happened and you _do_ know what it was about.
+
+`hey <names> +tag <tags>`
+
+`<names>` is a space separated list of one or more
+people's names.
+
+`<tags>` is a space separated list of tags to associated with this event.
 
 #### Viewing recent events
 `hey list`
@@ -81,12 +93,12 @@ InterruptTracker.com for you. You can see an example
 
 
 #### Tag an event
-`hey tag <event id> <tag(s)>`  
-`hey retag <event id> <tag(s)>`
+`hey tag <event id> <tags>`  
+`hey retag <event id> <tags>`
 
 `<event id>` is one of the ids shown by `hey list` or `hey data`
 
-`<tag(s)>` is a space separated list of tags to associated with this event.
+`<tags>` is a space separated list of tags to associated with this event.
 
 If you `tag` the same event twice then the new tags will be appended to the list.
 
