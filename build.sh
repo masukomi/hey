@@ -1,8 +1,15 @@
 #!/bin/sh
 
+function compile_modules {
+	csc -emit-all-import-libraries -explicit-use listicles.scm
+	csc -emit-all-import-libraries -explicit-use interrupt-database.scm
+	csc -emit-all-import-libraries -explicit-use uri-tools.scm
+	csc -emit-all-import-libraries -explicit-use people-by-hour-report.scm
+}
+
 deploy_type=$1
 if [ "$deploy_type" = "" ]; then
-	echo "deploy type? [libraries|local|gui|dmg]: "
+	echo "deploy type? [libraries|local|gui|dmg|modules]: "
 	read deploy_type
 fi
 
@@ -38,14 +45,16 @@ if [ "$deploy_type" = "libraries" ]; then
 elif [ "$deploy_type" = "local" ]; then
 	echo "doing local build"
 	csc hey.scm
+elif [ "$deploy_type" = "modules" ]; then
+	compile_modules
 elif [ "$deploy_type" = "gui" ]; then
 	# let's just make sure listicles is good and fresh
-	csc -emit-all-import-libraries -explicit-use listicles.scm
-	csc -emit-all-import-libraries -explicit-use interrupt-database.scm
+	compile_modules
 	rm -rf hey.app
 	csc -deploy -gui hey.scm
 	cp listicles hey.app/Contents/MacOS/
 	cp interrupt-database hey.app/Contents/MacOS/
+	cp people-by-hour-report hey.app/Contents/MacOS/
 	cp default.db hey.app/Contents/MacOS/
 	cp -r hey_libs/* hey.app/Contents/MacOS/
 	rm hey.app/Contents/Resources/CHICKEN.icns
