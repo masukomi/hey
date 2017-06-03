@@ -1,0 +1,37 @@
+body{
+    background: #EADBC4;
+    color: #5b4421;
+    cursor: auto;
+    font-style: normal;
+    font-weight: 400;
+    margin: 0;
+}
+.graph_box, #footer {
+    width: 75%;
+    margin-left: 12.5%;
+}
+h1, h2, h3, h4, .LemonYellowSun { font-family: LemonYellowSun; }
+#logo{
+  max-width: 6rem;
+  display:block;
+}
+#logo_holder{
+
+}
+.page_header{
+  display: inline-block;
+  float: left;
+  margin-left: 1rem;
+}
+.header {
+  display: block;
+  height: 4rem;
+}
+#footer{
+  margin-top: 4rem;
+  font-family: sans-serif;
+  color: #a77d7d;
+}
+a:link, a:visited, a:hover, a:active {
+    color: #a77d7d;
+}
