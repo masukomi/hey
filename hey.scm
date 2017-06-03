@@ -28,6 +28,7 @@
 (use utils)
 (use ports)
 (use listicles)
+(use hey-dates)
 (use interrupt-database)
 (use people-by-hour-report)
 
@@ -224,8 +225,13 @@
 (define (list-events)
  (print "Recent interruptions in chronological order...\n")
  (let ((row-data '())
+       (midnight-yesterday 
+         (date->sqlite-string 
+           (date-at-midnight-x-days-ago 1 (current-seconds))))
        (db (open-db)))
-  (do-list row (query fetch-rows (sql db "SELECT e.id, e.created_at FROM events e order by e.created_at desc;"))
+  (do-list row (query fetch-rows (sql db 
+    "SELECT e.id, e.created_at FROM events e where created_at > ? order by e.created_at desc;")
+                      midnight-yesterday)
    (set! row-data (cons (get-event-display-data row db) row-data)))
   (let ((id-column (map (lambda (x)
                          (sprintf "~A" (car (nth 0 x))))
@@ -289,7 +295,7 @@
 
 (define (version)
  (print
-  "Hey version 0.2.0\nCopyright 2017 Kay Rhodes\nDistributed under the MIT License.\nWritten in Chicken Scheme."))
+  "Hey version 0.3.0\nCopyright 2017 Kay Rhodes\nDistributed under the MIT License.\nWritten in Chicken Scheme."))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define recognized-commands
