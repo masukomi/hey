@@ -18,13 +18,16 @@
             encoded-labels
             encoded-series)))
 
- (define (graph-people-by-hour db)
+ (define (graph-people-by-hour args db)
   (begin
    ; generate the only supported graph type people-by-hour
    ; TODO modify query to use this where clause 
    ; once i figure out how to generate a the date at midnight yesterday
    ; where e.created_at BETWEEN '2017-05-25' AND 'now'
-   (let ((series-data '())
+   (let ((bars-or-lines (if (null? args)
+                            "stacked_bar_chart"
+                            (car args)))
+         (series-data '())
          (hours-hash (make-hash-table equal?))
          (person->hour->value (make-hash-table equal?))
          (previous-name "")
@@ -89,6 +92,6 @@
 
     ; data's built
     ; let's generate the report
-    (open-url (generate-url "stacked_bar_chart"
+    (open-url (generate-url bars-or-lines
                             (sort-strings< (hash-table-keys hours-hash))
                             series-data))))))

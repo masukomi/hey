@@ -204,10 +204,14 @@
  (let ((known-report-types (list "people-by-hour")))
   (if (null? args)
    (print
-    "No graph type specified. \n\tAvailable graph types:\n\t* people-by-hour\n  \t  * A stacked bar chart of the number of interrupts, by person, by hour\n    \tfor the past 24hrs")
+    "No graph type specified.
+    Available graph types:
+    * people-by-hour [stacked_bar_chart|line_chart]
+    * A stacked bar chart of the number of interrupts, by person, by hour
+        for the past 24hrs. Defaults to stacked_bar_chart")
    (cond
     ((equal? "people-by-hour" (car args))
-     (graph-people-by-hour (open-db)))
+     (graph-people-by-hour (cdr args) (open-db)))
     (else
      (print (sprintf "Unknown report type: ~A~%Available report types: ~A"
                      (car args)
