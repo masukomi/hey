@@ -6,6 +6,7 @@
          srfi-1
          srfi-69
          sql-de-lite
+         extras
          loops
          listicles
          uri-tools))
