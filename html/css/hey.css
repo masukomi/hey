@@ -15,6 +15,10 @@ h1, h2, h3, h4, .LemonYellowSun { font-family: LemonYellowSun; }
   max-width: 6rem;
   display:block;
 }
+.content{
+    width: 75%;
+    margin-left: 12.5%;
+}
 #logo_holder{
 
 }
