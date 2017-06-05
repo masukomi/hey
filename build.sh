@@ -10,12 +10,11 @@ function compile_modules {
 
 deploy_type=$1
 if [ "$deploy_type" = "" ]; then
-	echo "deploy type? [libraries|local|gui|dmg|modules]: "
+	echo "deploy type? [libraries|local|mac|dmg|modules]: "
 	read deploy_type
 fi
 
 if [ "$deploy_type" = "libraries" ]; then
-	echo "doing clean gui build."
 
 	if [ -d "hey_libs" ]; then
 		  rm -rf hey_libs
@@ -48,7 +47,7 @@ elif [ "$deploy_type" = "local" ]; then
 	csc hey.scm
 elif [ "$deploy_type" = "modules" ]; then
 	compile_modules
-elif [ "$deploy_type" = "gui" ]; then
+elif [ "$deploy_type" = "mac" ]; then
 	# let's just make sure listicles is good and fresh
 	compile_modules
 	rm -rf hey.app
