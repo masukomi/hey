@@ -97,6 +97,7 @@
 (define (open-db)
  (let ((config (get-config)))
   (let ((hey-db (hash-table-ref config "HEY_DB")))
+   (print (sprintf "loading db at ~A" hey-db))
    (load-db-at-path (pathname-expand hey-db)))))
 
 (define (tag-event tags event-id db)
@@ -223,39 +224,41 @@
   "Usage instructions are at https://interrupttracker.com/usage.html\nGeneral info is available at https://interrupttracker.com/\n\nI'm @masukomi on Twitter and happy to help there."))
 
 (define (list-events)
- (print "Recent interruptions in chronological order...\n")
- (let ((row-data '())
-       (midnight-yesterday 
-         (date->sqlite-string 
-           (date-at-midnight-x-days-ago 1 (current-seconds))))
-       (db (open-db)))
-  (do-list row (query fetch-rows (sql db 
-    "SELECT e.id, e.created_at FROM events e where created_at > ? order by e.created_at desc;")
-                      midnight-yesterday)
-   (set! row-data (cons (get-event-display-data row db) row-data)))
-  (let ((id-column (map (lambda (x)
-                         (sprintf "~A" (car (nth 0 x))))
-                        row-data))
-        (event-column (map (lambda (x)
-                            (sprintf "~A" (nth 1 (nth 0 x))))
-                           row-data))
-        (people-column (map (lambda (x)
-                             (sprintf "~A" (string-join (nth 1 x) ", ")))
-                            row-data))
-        (tags-column (map (lambda (x)
-                           (sprintf "~A" (string-join (nth 2 x) ", ")))
+
+ (let ((days-ago 3))
+   (let ((row-data '())
+         (midnight-yesterday 
+           (date->sqlite-string 
+             (date-at-midnight-x-days-ago 3 (current-seconds))))
+         (db (open-db)))
+    (print (sprintf "Last ~A day's interruptions in chronological order...\n" days-ago))
+    (do-list row (query fetch-rows (sql db 
+      "SELECT e.id, e.created_at FROM events e where created_at > ? order by e.created_at desc;")
+                        midnight-yesterday)
+     (set! row-data (cons (get-event-display-data row db) row-data)))
+    (let ((id-column (map (lambda (x)
+                           (sprintf "~A" (car (nth 0 x))))
                           row-data))
-        (row-count (length row-data)))
-   (fmt #t
-        (tabular " | "
-                 (dsp (string-join (append '("ID") id-column) "\n"))
-                 " | "
-                 (dsp (string-join (append '("When") event-column) "\n"))
-                 " | "
-                 (dsp (string-join (append '("Who") people-column) "\n"))
-                 " | "
-                 (dsp (string-join (append '("Tags") tags-column) "\n"))
-                 " | ")))))
+          (event-column (map (lambda (x)
+                              (sprintf "~A" (nth 1 (nth 0 x))))
+                             row-data))
+          (people-column (map (lambda (x)
+                               (sprintf "~A" (string-join (nth 1 x) ", ")))
+                              row-data))
+          (tags-column (map (lambda (x)
+                             (sprintf "~A" (string-join (nth 2 x) ", ")))
+                            row-data))
+          (row-count (length row-data)))
+     (fmt #t
+          (tabular " | "
+                   (dsp (string-join (append '("ID") id-column) "\n"))
+                   " | "
+                   (dsp (string-join (append '("When") event-column) "\n"))
+                   " | "
+                   (dsp (string-join (append '("Who") people-column) "\n"))
+                   " | "
+                   (dsp (string-join (append '("Tags") tags-column) "\n"))
+                   " | "))))))
 
 (define (process-command command args)
  ; sometimes there's nothing passed after the command
