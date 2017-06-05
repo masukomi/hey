@@ -32,6 +32,41 @@ handle things.
 You can [download the latest version here.](https://interrupttracker.com/downloads/hey.dmg)
 Open that up and follow the instructions in the README.md
 
+Unfortunately, right now it requires that you have 
+[Chicken Scheme](https://www.call-cc.org/) installed.  There's a library file
+it's linking to that I haven't extracted into the build yet. Sorry.
+
+#### Building from source
+In this case there's no getting around the need for having 
+[Chicken Scheme](https://www.call-cc.org/) installed.
+
+Once you've done that building it is pretty easy
+
+For linux:
+```
+./build.sh libraries
+./build.sh linux
+```
+
+The first command will create a `hey_libs` directory and install all the require
+"eggs" (third party libraries). You should only ever need to do that once. 
+The second command will build the modules and an executable, and place them in
+the `hey_libs` directory, then put together a cli tool called `hey` that will
+run the real `hey` executable from within that directory, because it needs to be
+run from within the same directory as its libraries.
+
+On macOS we get around this by bundling it all up in a `.app` folder and hiding
+the libs in there. But, we still need the helper cli script.
+
+To build the macOS .app version from scratch you'll need to have the 
+[appdmg npm tool](https://www.npmjs.com/package/appdmg) installed.
+
+Once you've got that just run
+
+```
+./build.sh libraries
+./build.sh mac
+
 #### Geeks on other platforms
 Hey is written in [Chicken Scheme](https://www.call-cc.org/), 
 which generates standard C files. As a

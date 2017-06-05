@@ -1,49 +1,15 @@
 #!/bin/sh
 
-HEY_APP_PATH="/Applications/hey.app"
+EXPECTED_PATH="/Applications/hey.app"
 FOUND_AT_DEFAULT=false
 
+eval "$(cat "bash_files/ask.sh")"
 
-ask() {
-    # https://djm.me/ask
-    local prompt default REPLY
-
-    while true; do
-
-        if [ "${2:-}" = "Y" ]; then
-            prompt="Y/n"
-            default=Y
-        elif [ "${2:-}" = "N" ]; then
-            prompt="y/N"
-            default=N
-        else
-            prompt="y/n"
-            default=
-        fi
-
-        # Ask the question (not using "read -p" as it uses stderr not stdout)
-        echo "$1 [$prompt] "
-
-        # Read the answer (use /dev/tty in case stdin is redirected from somewhere else)
-        read REPLY </dev/tty
-
-        # Default?
-        if [ -z "$REPLY" ]; then
-            REPLY=$default
-        fi
-
-        # Check if the reply is valid
-        case "$REPLY" in
-            Y*|y*) return 0 ;;
-            N*|n*) return 1 ;;
-        esac
-
-    done
-}
+source bash_files/install_cli_tool.sh
 
 
 function test_app_at_default_loc {
-	if [ -d "$HEY_APP_PATH" ]; then
+	if [ -d "$EXPECTED_PATH" ]; then
 		FOUND_AT_DEFAULT=true
 	else
 		FOUND_AT_DEFAULT=true
@@ -54,75 +20,30 @@ if ! ask "Ready to install hey?"; then
 	echo "Oh, well. I'll wait until you are."
 	exit 0
 else
-	test_app_at_default_loc
-
-	if [ "$FOUND_AT_DEFAULT" != true ]; then
-		echo "Um. I was expecting to find hey.app at $HEY_APP_PATH"
-		if [ -d "./hey.app" ]; then
-			if ask "I found it right beside me though. Can I move it to $HEY_APP_PATH ?"; then
-				cp -r ./hey.app $HEY_APP_PATH
-				test_app_at_default_loc
-				if [ "$FOUND_AT_DEFAULT" != true ]; then
-					echo "um... that didn't work. Can you please move it to"
-					echo "$HEY_APP_PATH and then run me again?"
-					exit 1
-				fi
-			fi
+	eval "$(cat "bash_files/where_is_it.sh")"
+	if [ -d $EXPECTED_PATH ]; then
+		echo "Um. I was expecting to find it at $EXPECTED_PATH"
+		echo "I'm not sure where it is. "
+		if [ "$(uname)" = "Darwin" ]; then
+			echo "Please enter the path to hey.app"
 		else
-			echo "I'm not sure where it is. "
-			echo "Please enter the path to where hey.app lives: "
-			read HEY_APP_PATH
-			echo "Thanks. Moving on..."
+			echo "Please enter the path to the 'hey_libs' folder."
 		fi
+		read EXPECTED_PATH
+		echo "Thanks. Moving on..."
 	fi
 
-	echo "---------------------------------------------------------------"
-	echo "Where should I install the hey cli tool? "
-	echo "Here are all the writable directories on your PATH:"
-
-	arrPATH=(${PATH//:/ })
-	count=0
-	for i in "${arrPATH[@]}"
-	do
-	    if [ -w "$i" ]; then
-		  count=$((count+1))
-		  echo "$count: $i" 
-	    fi
-	done
-	echo ""
-	echo "Which one would you like the cli tool installed in? [number]: "
-	read number
-
-	arrPATH=(${PATH//:/ })
-	count=0
-	installed=0
-	for i in "${arrPATH[@]}"
-	do
-		if [ -w "$i" ]; then
-			count=$((count+1))
-			if [ "$count" = "$number" ]; then
-				echo "installing in $i"
-				cat > "$i/hey" << EOM
-#!/bin/sh
-
-(cd $HEY_APP_PATH/Contents/MacOS && HEY_DB="\$HEY_DB" ./hey "\$@")
-
-EOM
-				chmod 755 "$i/hey"
-
-				installed=1
-			fi
-		fi
-		# echo "$count: $i" 
-	done
-	if [ $installed -eq 0 ]; then
-		echo "um... you didn't enter a number I recognized."
-		echo "Please start over, you silly human."
-		exit 2
-	fi
-
+	install_cli_tool $EXPECTED_PATH
+	
 	mkdir -p $HOME/.config/hey
-	DB_PATH=$HEY_APP_PATH/Contents/MacOS/database.db
+	if [ "$(uname)" = "Darwin" ]; then
+		if [[ $EXPECTED_PATH == *"hey.app"* ]]; then
+			DB_PATH=$EXPECTED_PATH/Contents/MacOS/database.db
+		fi
+	else
+		DB_PATH=$EXPECTED_PATH/database.db
+	fi
+
 	if [ -e "$HOME/Dropbox" ]; then
 		echo "---------------------------------------------------------------"
 		echo "Hey, I see you use Dropbox. I'd suggest saving your db there."
@@ -133,13 +54,13 @@ EOM
 		fi
 	fi
 	if [ ! -e "$DB_PATH" ];then
-		cp $HEY_APP_PATH/Contents/MacOS/default.db $DB_PATH
+		cp default.db $DB_PATH
 	else
 		echo "---------------------------------------------------------------"
 		echo "DB already exists at $DB_PATH"
 		echo "I won't overwrite." 
 		echo "If you'd like to replace it with an empty one, run this command:"
-		echo "cp $HEY_APP_PATH/Contents/MacOS/default.db $DB_PATH"
+		echo "cp default.db $DB_PATH"
 	fi
 	cat > $HOME/.config/hey/config.json <<EOM
 {

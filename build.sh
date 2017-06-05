@@ -7,15 +7,19 @@ function compile_modules {
 	csc -emit-all-import-libraries -explicit-use hey-dates.scm
 	csc -emit-all-import-libraries -explicit-use people-by-hour-report.scm
 }
-
-deploy_type=$1
-if [ "$deploy_type" = "" ]; then
-	echo "deploy type? [libraries|local|mac|dmg|modules]: "
-	read deploy_type
-fi
-
-if [ "$deploy_type" = "libraries" ]; then
-
+function copy_modules_into_libs {
+	if [ ! -d hey_libs ]; then
+		echo "Please run './build.sh libraries' first to create the hey_libs"
+		echo "directory and install the 3rd party libraries."
+		exit 1
+	fi
+	cp listicles hey_libs/
+	cp uri-tools hey_libs/
+	cp hey-dates hey_libs/
+	cp interrupt-database hey_libs/
+	cp people-by-hour-report hey_libs/
+}
+function build_libraries {
 	if [ -d "hey_libs" ]; then
 		  rm -rf hey_libs
 	fi
@@ -42,35 +46,66 @@ if [ "$deploy_type" = "libraries" ]; then
 	chicken-install -deploy -p hey_libs/ uri-common
 	chicken-install shell
 	chicken-install -deploy -p hey_libs/ shell
-elif [ "$deploy_type" = "local" ]; then
+}
+function build_local {
 	echo "doing local build"
 	csc hey.scm
-elif [ "$deploy_type" = "modules" ]; then
+}
+
+function build_mac {
 	compile_modules
-elif [ "$deploy_type" = "mac" ]; then
-	# let's just make sure listicles is good and fresh
-	compile_modules
+	copy_modules_into_libs
+	cp default.db hey_libs/
 	rm -rf hey.app
 	csc -deploy -gui hey.scm
-	cp listicles hey.app/Contents/MacOS/
-	cp interrupt-database hey.app/Contents/MacOS/
-	cp people-by-hour-report hey.app/Contents/MacOS/
-	cp default.db hey.app/Contents/MacOS/
 	cp -r hey_libs/* hey.app/Contents/MacOS/
 	rm hey.app/Contents/Resources/CHICKEN.icns
 	cp images/iconset.icns hey.app/Contents/Resources/CHICKEN.icns
 	# perl -pi -e 's/CHICKEN.icns/iconfile.icns/g' hey.app/Contents/Info.plist
 
-	echo "replace /Appications/hey.app ? [y|n]: "
-	read replace_it
-	if [ "$replace_it" = "y" ]; then 
+	source bash_files/ask.sh
+	
+	if ask "replace /Appications/hey.app?"; then
 		rm -rf /Applications/hey.app
 		cp -r hey.app /Applications/
 		echo "replaced."
+	else
+		echo "ok. I won't."
 	fi
+
+	if ask "Install cli helper tool to execute it from anywhere?"; then
+		source bash_files/install_cli_tool.sh
+		eval "$(cat "bash_files/where_is_it.sh")"
+		install_cli_tool $EXPECTED_PATH
+	fi
+}
+
+deploy_type=$1
+if [ "$deploy_type" = "" ]; then
+	echo "deploy type? [libraries|local|mac|linux|dmg|modules]: "
+	read deploy_type
+fi
+
+if [ "$deploy_type" = "libraries" ]; then
+	build_libraries
+elif [ "$deploy_type" = "local" ]; then
+	build_local
+elif [ "$deploy_type" = "modules" ]; then
+	compile_modules
+elif [ "$deploy_type" = "mac" ]; then
+	build_mac
+elif [ "$deploy_type" = "linux" ]; then
+	compile_modules
+	copy_modules_into_libs
+	build_local
+	cp hey hey_libs/
+	source bash_files/install_cli_tool.sh
+	eval "$(cat "bash_files/where_is_it.sh")"
+	install_cli_tool $EXPECTED_PATH
 elif [ "$deploy_type" = "dmg" ]; then
-  rm html/downloads/hey.dmg
-  appdmg appdmg.json html/downloads/hey.dmg
+	build_mac
+	rm html/downloads/hey.dmg
+	appdmg appdmg.json html/downloads/hey.dmg
 fi
 
 
