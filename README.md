@@ -193,6 +193,11 @@ For example:
       "HEY_DB": "~/path/to/my/hey.test.db"
     }
 
+When writing new code for hey it's often useful to have it tell you which db its
+pulling from. Add `"show_db_path": true` to the config hash and it'll display
+the db path when you run `hey list`. This defaults to false if it's not in your
+config.
+
 If you are building `hey` from source and not using the shell script created by
 the installer then you can set the `HEY_DB` environment variable to a path to
 your test DB and `hey` will use that instead. That way you can test / develop on

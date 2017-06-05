@@ -41,7 +41,6 @@
    id
    (create-person name db))))
 
-; TODO: combine find-or-create-tag with find-or-create-person
 (define (create-entry people-and-tags db)
  (let ((people '())
        (people-ids '())
@@ -96,9 +95,10 @@
 
 (define (open-db)
  (let ((config (get-config)))
-  (let ((hey-db (hash-table-ref config "HEY_DB")))
-   ; TODO: make printing this a config option
-   ; (print (sprintf "loading db at ~A" hey-db))
+  (let ((hey-db (hash-table-ref config "HEY_DB"))
+    (show-db-path (hash-table-ref/default config "show_db_path" #f)))
+    (if show-db-path
+      (print (sprintf "loading db at ~A" hey-db)))
    (load-db-at-path (pathname-expand hey-db)))))
 
 (define (tag-event tags event-id db)
