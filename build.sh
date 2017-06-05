@@ -48,11 +48,15 @@ function build_libraries {
 	chicken-install -deploy -p hey_libs/ shell
 }
 function build_local {
-	echo "doing local build"
+	echo "compiling hey.scm"
 	csc hey.scm
+	if [ -e hey_libs ]; then
+		cp hey hey_libs/
+	fi
 }
 
 function build_mac {
+	build_local
 	compile_modules
 	copy_modules_into_libs
 	cp default.db hey_libs/
