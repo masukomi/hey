@@ -97,7 +97,8 @@
 (define (open-db)
  (let ((config (get-config)))
   (let ((hey-db (hash-table-ref config "HEY_DB")))
-   (print (sprintf "loading db at ~A" hey-db))
+   ; TODO: make printing this a config option
+   ; (print (sprintf "loading db at ~A" hey-db))
    (load-db-at-path (pathname-expand hey-db)))))
 
 (define (tag-event tags event-id db)
