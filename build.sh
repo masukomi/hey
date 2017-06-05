@@ -114,6 +114,7 @@ elif [ "$deploy_type" = "linux" ]; then
 	install_cli_tool $EXPECTED_PATH
 elif [ "$deploy_type" = "dmg" ]; then
 	build_mac
+	mkdir -p html/downloads
 	rm html/downloads/hey.dmg
 	appdmg appdmg.json html/downloads/hey.dmg
 fi
