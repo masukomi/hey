@@ -30,6 +30,12 @@ function build_libraries {
 	chicken-install -deploy -p hey_libs/ loops
 	chicken-install sql-de-lite
 	chicken-install -deploy -p hey_libs/ sql-de-lite
+	chicken-install condition-utils
+	chicken-install -deploy -p hey_libs/ condition-utils
+	chicken-install error-utils
+	chicken-install -deploy -p hey_libs/ error-utils
+	chicken-install srfi-19
+	chicken-install -deploy -p hey_libs/ srfi-19
 	chicken-install srfi-13
 	chicken-install -deploy -p hey_libs/ srfi-13
 	chicken-install srfi-1
