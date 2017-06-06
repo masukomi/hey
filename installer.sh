@@ -1,27 +1,17 @@
 #!/bin/sh
 
-EXPECTED_PATH="/Applications/hey.app"
 FOUND_AT_DEFAULT=false
 
-eval "$(cat "bash_files/ask.sh")"
-
+source bash_files/ask.sh
 source bash_files/install_cli_tool.sh
 
-
-function test_app_at_default_loc {
-	if [ -d "$EXPECTED_PATH" ]; then
-		FOUND_AT_DEFAULT=true
-	else
-		FOUND_AT_DEFAULT=true
-	fi
-}
+eval "$(cat "bash_files/where_is_it.sh")"
 
 if ! ask "Ready to install hey?"; then
 	echo "Oh, well. I'll wait until you are."
 	exit 0
 else
-	eval "$(cat "bash_files/where_is_it.sh")"
-	if [ -d $EXPECTED_PATH ]; then
+	if [ ! -d $EXPECTED_PATH ]; then
 		echo "Um. I was expecting to find it at $EXPECTED_PATH"
 		echo "I'm not sure where it is. "
 		if [ "$(uname)" = "Darwin" ]; then
