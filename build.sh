@@ -61,6 +61,7 @@ function build_local {
 	fi
 }
 
+
 function build_mac {
 	build_local
 	compile_modules
@@ -113,7 +114,14 @@ elif [ "$deploy_type" = "linux" ]; then
 	eval "$(cat "bash_files/where_is_it.sh")"
 	install_cli_tool $EXPECTED_PATH
 elif [ "$deploy_type" = "dmg" ]; then
-	build_mac
+	echo "compiling hey.scm"
+	rm -rf hey
+	csc -deploy hey.scm
+	if [ -e hey_libs ]; then
+		cp hey/hey hey_libs/
+		rm -rf hey
+	fi
+
 	mkdir -p html/downloads
 	rm html/downloads/hey.dmg
 	appdmg appdmg.json html/downloads/hey.dmg
