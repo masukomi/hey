@@ -211,6 +211,7 @@
     "No graph type specified.
     Available graph types:
     * people-by-hour [stacked_bar_chart|line_chart]
+    * interrupts-by-day
     * A stacked bar chart of the number of interrupts, by person, by hour
         for the past 24hrs. Defaults to stacked_bar_chart")
    (cond

@@ -127,6 +127,11 @@ Collates your data, and loads it in a pretty graph on
 InterruptTracker.com for you. You can see an example 
 [here](https://interrupttracker.com/stacked_bar_chart.html)
 
+`hey graph interrupts-by-day`
+
+Same thing, but graphs the number of interrupts by day as a 
+line chart.
+
 
 #### Tag an event
 `hey tag <event id> <tags>`  
