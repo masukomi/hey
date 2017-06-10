@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Interruptions by person, by hour.</title>
+    <title id="title">Interrupt Tracker Stacked Bar Chart.</title>
     <link rel="stylesheet"
           href="css/chartist.min.css">
     <script src="javascript/chartist.min.js"></script>
@@ -29,7 +29,7 @@
         <a href="https://interrupttracker.com"><img
            src="images/hey_plus_text_icon.svg" id="logo" align="left" /></a>
       </span>
-      <h3 class="LemonYellowSun page_header">Interrupts, by person, by hour</h3>
+      <h3 class="LemonYellowSun page_header" id="page_header">Interrupt Tracker Stacked Bar Chart.</h3>
     </div>
     <div class="ct-chart ct-perfect-fourth graph_box"></div>
     <!-- Site content goes here !-->
@@ -56,9 +56,18 @@
           ]
           
         ];
+
+      var final_title = demo_title;
+      var temp_title = getParameterByName('title');
+      if (temp_title != null){
+        final_title = temp_title;
+      }
+      document.getElementById("title").innerHTML = final_title;
+      document.getElementById("page_header").innerHTML = final_title;
+
       var final_labels = demo_labels;
       try {
-        temp_labels = eval(getParameterByName('labels'));
+        var temp_labels = eval(getParameterByName('labels'));
         if (temp_labels != null){
           final_labels = temp_labels;
         }
@@ -69,7 +78,7 @@
 
       var final_series = demo_series;
       try {
-        temp_series = eval(getParameterByName('series'));
+        var temp_series = eval(getParameterByName('series'));
         if (temp_series != null ){
           final_series = temp_series;
         }
@@ -93,6 +102,7 @@
             }
           }
         },
+        low: 0,
         plugins: [
           Chartist.plugins.tooltip()
         ]
@@ -106,9 +116,9 @@
     
     </script>
     <div id="footer">
-      <a href="htts://interrupttracker.com/">Hey</a> is copyright © 2017 Kay Rhodes. The <a
+      <a href="htts://interrupttracker.com/">Hey</a> is copyright (c) 2017 Kay Rhodes. The <a
          href="https://gionkunz.github.io/chartist-js/index.html">Chartist
-         graphing library</a> is copyright © 2013 Gion Kunz. Both are distributed
+         graphing library</a> is copyright (c) 2013 Gion Kunz. Both are distributed
        under the MIT license.
     </div>
   </body>
