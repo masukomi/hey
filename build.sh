@@ -19,6 +19,7 @@ function copy_modules_into_libs {
 	cp hey-dates hey_libs/
 	cp interrupt-database hey_libs/
 	cp people-by-hour-report hey_libs/
+	cp interrupts-by-day-report hey_libs/
 }
 function build_libraries {
 	if [ -d "hey_libs" ]; then
