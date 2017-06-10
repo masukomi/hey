@@ -303,7 +303,7 @@
 
 (define (version)
  (print
-  "Hey version 0.4.0\nCopyright 2017 Kay Rhodes\nDistributed under the MIT License.\nWritten in Chicken Scheme."))
+  "Hey version 0.5.0\nCopyright 2017 Kay Rhodes\nDistributed under the MIT License.\nWritten in Chicken Scheme."))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define recognized-commands
