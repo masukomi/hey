@@ -6,6 +6,7 @@ function compile_modules {
 	csc -emit-all-import-libraries -explicit-use uri-tools.scm
 	csc -emit-all-import-libraries -explicit-use hey-dates.scm
 	csc -emit-all-import-libraries -explicit-use people-by-hour-report.scm
+	csc -emit-all-import-libraries -explicit-use interrupts-by-day-report.scm
 }
 function copy_modules_into_libs {
 	if [ ! -d hey_libs ]; then
@@ -100,6 +101,7 @@ fi
 if [ "$deploy_type" = "libraries" ]; then
 	build_libraries
 elif [ "$deploy_type" = "local" ]; then
+	compile_modules
 	build_local
 elif [ "$deploy_type" = "modules" ]; then
 	compile_modules

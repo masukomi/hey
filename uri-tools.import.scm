@@ -4,7 +4,8 @@
 (##sys#register-compiled-module
   'uri-tools
   (list)
-  '((json->uri-string . uri-tools#json->uri-string)
+  '((generate-graph-url . uri-tools#generate-graph-url)
+    (json->uri-string . uri-tools#json->uri-string)
     (json->string . uri-tools#json->string)
     (open-url . uri-tools#open-url))
   (list)

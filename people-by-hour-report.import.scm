@@ -9,7 +9,8 @@
          extras
          loops
          listicles
-         uri-tools))
+         uri-tools
+         hey-dates))
 (##sys#register-compiled-module
   'people-by-hour-report
   (list)

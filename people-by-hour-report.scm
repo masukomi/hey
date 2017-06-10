@@ -9,14 +9,8 @@
  (use loops)
  (use listicles)
  (use uri-tools)
+ (use hey-dates)
 
- (define (generate-url graph-type labels series)
-  (let ((encoded-labels (json->uri-string labels))
-        (encoded-series (json->uri-string series)))
-   (sprintf "https://interrupttracker.com/~A.html?labels=~A&series=~A"
-            graph-type
-            encoded-labels
-            encoded-series)))
 
  (define (graph-people-by-hour args db)
   (begin
@@ -35,7 +29,18 @@
                 fetch-rows
                 (sql
                  db
-                 "select \n  p.name,\n  strftime('%H', e.created_at) hour, count(*) interrupts\nfrom \n  events e \n  inner join events_people ep on ep.event_id = e.id\n  inner join people p on ep.person_id = p.id\ngroup by 2, 1\norder by p.name asc;"))))
+"select 
+  p.name,
+  strftime('%H', e.created_at) hour, count(*) interrupts
+from 
+  events e 
+  inner join events_people ep on ep.event_id = e.id
+  inner join people p on ep.person_id = p.id
+where e.created_at > date('now', '-7 days')
+group by 2, 1
+order by p.name asc;")
+
+      )))
     ; that looks like
     ; name | hour | interrupts
     ; bob  | 11   | 4
@@ -92,6 +97,7 @@
 
     ; data's built
     ; let's generate the report
-    (open-url (generate-url bars-or-lines
+    (open-url (generate-graph-url bars-or-lines
                             (sort-strings< (hash-table-keys hours-hash))
-                            series-data))))))
+                            series-data
+                            "Interruptions by person, by hour."))))))

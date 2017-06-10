@@ -1,4 +1,4 @@
-(module uri-tools (json->uri-string json->string open-url)
+(module uri-tools (generate-graph-url json->uri-string json->string open-url)
  (import chicken)
  (import scheme)
 
@@ -8,6 +8,16 @@
 
  (require-extension uri-common)
  (require-extension json)
+
+ (define (generate-graph-url graph-type labels series title)
+  (let ((encoded-labels (json->uri-string labels))
+        (encoded-series (json->uri-string series)))
+   (sprintf "https://interrupttracker.com/~A.html?title=~A&labels=~A&series=~A"
+            graph-type
+            (uri-encode-string title)
+            encoded-labels
+            encoded-series)))
+ 
  (define (json->string data)
   (let ((output-port (open-output-string)))
    (json-write data output-port)
