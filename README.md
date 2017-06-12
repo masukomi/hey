@@ -145,6 +145,11 @@ If you `tag` the same event twice then the new tags will be appended to the list
 
 If you `retag` an event the new list will replace the old one
 
+#### Show existing tags
+`hey tags`
+
+Lists all the tags currently in the system.
+
 #### Comment on an event
 `hey comment <event id> <my comment string>`
 

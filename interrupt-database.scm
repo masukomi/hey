@@ -11,6 +11,7 @@
     join-tag-to-event
     join-tags-to-event
     event-has-tag?
+    find-tags
     join-person-to-event
     comment-on-event)
  (import chicken)
@@ -26,6 +27,9 @@
 
  ;----------------------------------------------------------------------------
  ; tags
+ (define (find-tags db)
+  (query fetch-column
+         (sql db "SELECT distinct name from tags order by name asc;")))
  (define (create-tag name db)
   (define s (prepare db "insert into tags (name) values (?);"))
   (bind-parameters s name)

@@ -16,6 +16,7 @@
     (join-tag-to-event . interrupt-database#join-tag-to-event)
     (join-tags-to-event . interrupt-database#join-tags-to-event)
     (event-has-tag? . interrupt-database#event-has-tag?)
+    (find-tags . interrupt-database#find-tags)
     (join-person-to-event . interrupt-database#join-person-to-event)
     (comment-on-event . interrupt-database#comment-on-event))
   (list)

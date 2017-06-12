@@ -121,6 +121,9 @@
 (define (retag id args)
  (sprintf "asked to retag ~A with ~A" id args))
 
+(define (list-tags)
+  (print (sprintf "current tags: ~A" (string-join (find-tags (open-db)) ", ") )))
+
 (define (tag id tags)
  (let ((db (open-db)))
   (let ((event-id (find-event-by-id id db)))
@@ -286,6 +289,8 @@
     (help))
    ((equal? command "tag")
     (tag (second args) (cdr (cdr args))))
+   ((equal? command "tags")
+    (list-tags))
    ((equal? command "comment")
     (comment (second args) (string-join (cdr (cdr args)) " ")))
    ((equal? command "retag")
@@ -307,7 +312,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define recognized-commands
- '("tag" "retag" "delete" "kill" "data" "list" "comment" "graph" "--version" "-v" "help"))
+ '("tag" "retag" "delete" "kill" "data" "list" "comment" "graph" "--version" "-v" "help" "tags"))
 (define (main args)
  (let ((downcased-args (downcase-list args)))
   (if (> (length downcased-args) 1)

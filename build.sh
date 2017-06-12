@@ -1,4 +1,5 @@
 #!/bin/sh
+source bash_files/ask.sh
 
 function compile_modules {
 	csc -emit-all-import-libraries -explicit-use listicles.scm
@@ -76,7 +77,6 @@ function build_mac {
 	cp images/iconset.icns hey.app/Contents/Resources/CHICKEN.icns
 	# perl -pi -e 's/CHICKEN.icns/iconfile.icns/g' hey.app/Contents/Info.plist
 
-	source bash_files/ask.sh
 	
 	if ask "replace /Appications/hey.app?"; then
 		rm -rf /Applications/hey.app
@@ -100,7 +100,9 @@ if [ "$deploy_type" = "" ]; then
 fi
 
 if [ "$deploy_type" = "libraries" ]; then
-	build_libraries
+	if ask "this will delete & rebuild the hey_libs dir if present. Are you sure?"; then
+		build_libraries
+	fi
 elif [ "$deploy_type" = "local" ]; then
 	compile_modules
 	build_local
