@@ -119,8 +119,7 @@ elif [ "$deploy_type" = "linux" ]; then
 	eval "$(cat "bash_files/where_is_it.sh")"
 	install_cli_tool $EXPECTED_PATH
 elif [ "$deploy_type" = "dmg" ]; then
-	echo "compiling hey.scm"
-	rm -rf hey
+	build_mac
 	csc -deploy hey.scm
 	if [ -e hey_libs ]; then
 		cp hey/hey hey_libs/
