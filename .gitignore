@@ -3,6 +3,7 @@ hey.app
 .DS_Store
 interrupts-by-day-report
 people-by-hour-report
+tags-by-hour-report
 uri-tools
 interrupt-database
 scratchpad.scm

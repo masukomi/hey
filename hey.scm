@@ -31,6 +31,7 @@
 (use hey-dates)
 (use interrupt-database)
 (use people-by-hour-report)
+(use tags-by-hour-report)
 (use interrupts-by-day-report)
 
 ; SET UP FUNCTIONS
@@ -208,7 +209,9 @@
    eid)))
 
 (define (graph args)
- (let ((known-report-types (list "people-by-hour" "interrupts-by-day")))
+ (let ((known-report-types (list "people-by-hour" 
+ 								 "tags-by-hour"
+ 								 "interrupts-by-day")))
   (if (null? args)
    (print
     "No graph type specified.
@@ -220,6 +223,8 @@
    (cond
     ((equal? "people-by-hour" (car args))
      (graph-people-by-hour (cdr args) (open-db)))
+    ((equal? "tags-by-hour" (car args))
+     (graph-tags-by-hour (cdr args) (open-db)))
     ((equal? "interrupts-by-day" (car args))
      (graph-interrupts-by-day (cdr args) (open-db))) ;
     (else
