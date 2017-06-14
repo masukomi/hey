@@ -210,7 +210,8 @@
 (define (graph args)
  (let ((known-report-types (list "people-by-hour" 
  								 "tags-by-hour"
- 								 "interrupts-by-day")))
+ 								 "interrupts-by-day"
+ 								 "interrupts-fgp")))
   (if (null? args)
    (print
     "No graph type specified.
@@ -218,11 +219,16 @@
     * people-by-hour [stacked_bar_chart|line_chart]
     * tags-by-hour [stacked_bar_chart|line_chart]
     * interrupts-by-day
-    * A stacked bar chart of the number of interrupts, by person, by hour
-        for the past 24hrs. Defaults to stacked_bar_chart")
+      * A stacked bar chart of the number of interrupts, by person, by hour
+        for the past 24hrs. Defaults to stacked_bar_chart
+    * interrupts-fgp
+      * generates a terminal graph of interrupts by hour.
+      * requires feedgnuplot to be installed")
    (cond
     ((equal? "people-by-hour" (car args))
      (graph-x-by-hour "people" (cdr args) (open-db)))
+    ((equal? "interrupts-fgp" (car args))
+     (graph-x-by-hour "people" '("feedgnuplot") (open-db)))
     ((equal? "tags-by-hour" (car args))
      (graph-x-by-hour "tags" (cdr args) (open-db)))
     ((equal? "interrupts-by-day" (car args))
