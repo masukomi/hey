@@ -6,8 +6,7 @@ function compile_modules {
 	csc -emit-all-import-libraries -explicit-use interrupt-database.scm
 	csc -emit-all-import-libraries -explicit-use uri-tools.scm
 	csc -emit-all-import-libraries -explicit-use hey-dates.scm
-	csc -emit-all-import-libraries -explicit-use people-by-hour-report.scm
-	csc -emit-all-import-libraries -explicit-use tags-by-hour-report.scm
+	csc -emit-all-import-libraries -explicit-use x-by-hour-report.scm
 	csc -emit-all-import-libraries -explicit-use interrupts-by-day-report.scm
 }
 function copy_modules_into_libs {

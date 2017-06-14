@@ -30,8 +30,7 @@
 (use listicles)
 (use hey-dates)
 (use interrupt-database)
-(use people-by-hour-report)
-(use tags-by-hour-report)
+(use x-by-hour-report)
 (use interrupts-by-day-report)
 
 ; SET UP FUNCTIONS
@@ -217,14 +216,15 @@
     "No graph type specified.
     Available graph types:
     * people-by-hour [stacked_bar_chart|line_chart]
+    * tags-by-hour [stacked_bar_chart|line_chart]
     * interrupts-by-day
     * A stacked bar chart of the number of interrupts, by person, by hour
         for the past 24hrs. Defaults to stacked_bar_chart")
    (cond
     ((equal? "people-by-hour" (car args))
-     (graph-people-by-hour (cdr args) (open-db)))
+     (graph-x-by-hour "people" (cdr args) (open-db)))
     ((equal? "tags-by-hour" (car args))
-     (graph-tags-by-hour (cdr args) (open-db)))
+     (graph-x-by-hour "tags" (cdr args) (open-db)))
     ((equal? "interrupts-by-day" (car args))
      (graph-interrupts-by-day (cdr args) (open-db))) ;
     (else
