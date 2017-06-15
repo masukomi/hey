@@ -158,7 +158,7 @@
       ((equal? x "tags")
        "select 
   t.name,
-  strftime('%H', e.created_at) hour, count(*) interrupts
+  strftime('%H', datetime(e.created_at, 'localtime')) hour, count(*) interrupts
 from 
   events e 
   inner join events_tags et on et.event_id = e.id
@@ -169,7 +169,7 @@ order by t.name asc;")
       ((equal? x "people")
        "select 
   p.name,
-  strftime('%H', e.created_at) hour, count(*) interrupts
+  strftime('%H', datetime(e.created_at, 'localtime')) hour, count(*) interrupts
 from 
   events e 
   inner join events_people ep on ep.event_id = e.id
@@ -179,7 +179,7 @@ group by 2, 1
 order by p.name asc;")
       ((equal? x "summary")
        "select 
-  strftime('%H', e.created_at) hour, count(*) interrupts
+  strftime('%H', datetime(e.created_at, 'localtime')) hour, count(*) interrupts
 from 
   events e 
 group by 1

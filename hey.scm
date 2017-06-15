@@ -252,7 +252,7 @@
          (db (open-db)))
     (print (sprintf "Last ~A day's interruptions in chronological order...\n" days-ago))
     (do-list row (query fetch-rows (sql db 
-      "SELECT e.id, e.created_at FROM events e where created_at > ? order by e.created_at desc;")
+      "SELECT e.id, datetime(e.created_at, 'localtime') FROM events e where created_at > ? order by e.created_at desc;")
                         midnight-yesterday)
      (set! row-data (cons (get-event-display-data row db) row-data)))
     (let ((id-column (map (lambda (x)
