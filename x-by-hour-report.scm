@@ -169,9 +169,16 @@ from
   inner join people p on ep.person_id = p.id
 where e.created_at > date('now', '-7 days')
 group by 2, 1
-order by p.name asc;"))
+order by p.name asc;")
+      ((equal? x "simple")
+       "select 
+  strftime('%H', e.created_at) hour, count(*) interrupts
+from 
+  events e 
+group by 1
+order by hour asc;")
        
     )
-
-  
   )
+  
+)
