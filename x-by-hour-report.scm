@@ -69,7 +69,7 @@
         ; (print (sprintf "temp-file: ~A" temp-file))
       (system (sprintf "cat ~A | feedgnuplot --lines --points --title '~A' --y2 1 --terminal 'dumb ~A,~A' --exit ; rm ~A" 
                        temp-file 
-                       (title-for-report (sprintf "~A-feedgnuplot" report-on)) 
+                       (title-for-report report-on) 
                        80 ;(get-environment-variable "COLUMNS")
                        20 ;(get-environment-variable "LINES") 
                        temp-file ))
@@ -148,9 +148,8 @@
   (define (title-for-report x)
     (cond
       ((equal? x "tags") "Interruptions by tag by, by hour.")
-      ((equal? x "tags-feedgnuplot") "Interruptions by hour.")
+      ((equal? x "summary") "Interruptions by hour.")
       ((equal? x "people") "Interruptions by person, by hour.")
-      ((equal? x "people-feedgnuplot") "Interruptions by hour.")
       ))
   
   (define (query-for x)
