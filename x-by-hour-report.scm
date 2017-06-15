@@ -24,35 +24,31 @@
                 fetch-rows
                 (sql
                  db (query-for report-on)))))
-                ; that looks like
-                ; name | hour | interrupts
-                ; bob  | 11   | 4
-                ; mary | 13   | 2
-                ;
-                ; OR 
-                ; ( ("bob"  11 4)
-                ;   ("mary" 13 2))
-                ;---------
-                ; END let vars
     (if (not (equal? "feedgnuplot" bars-or-lines))
       (graph-all-data-points bars-or-lines report-on rows)
       (simple-data-output report-on rows)))))
   
   (define (simple-data-output report-on rows)
     (let (
-         (hours-hash (make-hash-table equal?))
-         (previous-name ""))
+           (hours-hash (make-hash-table equal?))
+           (previous-name "")
+           (total-events 
+             (apply + (map (lambda(row)(last row)) rows))
+           )
+         )
           
+      ; rows looks like
+      ; hour | interrupts
+      ; 8    | 2
+      ; 10   | 1
       (do-list row rows
         (begin
           (let (
-              (x (car row))
-              (hour (string->number (car (cdr row))))
+              (hour (string->number (car row)))
               (interrupts (last row)))
-            (if (not (list-includes (hash-table-keys hours-hash) hour))
-              (hash-table-set! hours-hash hour 0))
             (hash-table-set! hours-hash hour 
-                             (+ interrupts (hash-table-ref hours-hash hour)))
+                             (/ interrupts (/ total-events 100))
+                             )
 
 
 
@@ -85,6 +81,17 @@
          (hours-hash (make-hash-table equal?))
          (x->hour->value (make-hash-table equal?))
          (previous-name ""))
+                ; rows looks like
+                ; name | hour | interrupts
+                ; bob  | 11   | 4
+                ; mary | 13   | 2
+                ;
+                ; OR 
+                ; ( ("bob"  11 4)
+                ;   ("mary" 13 2))
+                ;---------
+                ; END let vars
+
       (do-list row rows
        (begin
         ; make the new hash
@@ -169,9 +176,16 @@ from
   inner join people p on ep.person_id = p.id
 where e.created_at > date('now', '-7 days')
 group by 2, 1
-order by p.name asc;"))
+order by p.name asc;")
+      ((equal? x "summary")
+       "select 
+  strftime('%H', e.created_at) hour, count(*) interrupts
+from 
+  events e 
+group by 1
+order by hour asc;")
        
     )
-
-  
   )
+  
+)
