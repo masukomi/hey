@@ -68,8 +68,8 @@ function build_local {
 
 
 function build_mac {
-	build_local
 	compile_modules
+	build_local
 	copy_modules_into_libs
 	cp default.db hey_libs/
 	rm -rf hey.app
