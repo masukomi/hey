@@ -10,7 +10,10 @@
          loops
          listicles
          uri-tools
-         hey-dates))
+         hey-dates
+         data-structures
+         files
+         posix))
 (##sys#register-compiled-module
   'x-by-hour-report
   (list)

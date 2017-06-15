@@ -10,6 +10,9 @@
  (use listicles)
  (use uri-tools)
  (use hey-dates)
+ (use data-structures)
+ (use files)
+ (use posix)
 
 
  (define (graph-x-by-hour report-on args db)
@@ -17,10 +20,6 @@
    (let ((bars-or-lines (if (null? args)
                             "stacked_bar_chart"
                             (car args)))
-         (series-data '())
-         (hours-hash (make-hash-table equal?))
-         (x->hour->value (make-hash-table equal?))
-         (previous-name "")
          (rows (query
                 fetch-rows
                 (sql
@@ -35,63 +34,116 @@
                 ;   ("mary" 13 2))
                 ;---------
                 ; END let vars
-    (do-list row rows
-     (begin
-      ; make the new hash
-      ;(print (sprintf "graph row: ~A - car: ~A" row (car row)))
-      (let ((row-hash (make-hash-table equal?))
-            (x (car row))
-            (hour (car (cdr row)))
-            (interrupts (last row)))
-       ; and the new entry
-       (hash-table-set! row-hash "meta" x)
-       (hash-table-set! row-hash "value" interrupts)
-       (if (not (list-includes (hash-table-keys x->hour->value) x))
-        (hash-table-set! x->hour->value x (make-hash-table equal?)))
-       (hash-table-set! (hash-table-ref x->hour->value x)
-                        hour
-                        interrupts)
-       (hash-table-set! hours-hash hour #t))))
-
-    ; OK Now we have the hashes for everyone's time
-    ; let's fill in the hours they don't have
-    (do-list x (sort-strings< (hash-table-keys x->hour->value))
-     (do-list hour (sort-strings< (hash-table-keys hours-hash))
-      (let ((value (if (list-includes
-                        (hash-table-keys
-                         (hash-table-ref x->hour->value x))
-                        hour)
-                    (hash-table-ref (hash-table-ref x->hour->value x)
-                                    hour)
-                    0)))
-       (let ((row-hash (make-hash-table equal?)))
-        (hash-table-set! row-hash "meta" x)
-        (hash-table-set! row-hash "value" value)
-        (if (not (equal? x previous-name))
-         (begin
-          (set! series-data (append series-data (list (list row-hash))))
-          (set! previous-name x))
-         (begin
-          (let ((replacement (append (last series-data) (list row-hash))))
-           (set! series-data
-                 (replace-nth (last-index series-data)
-                              ; nth
-                              replacement
-
-                              ; replacement
-                              series-data)))))))))
-
-    ; data's built
-    ; let's generate the report
-    (open-url (generate-graph-url bars-or-lines
-                            (sort-strings< (hash-table-keys hours-hash))
-                            series-data
-                            (title-for-report report-on))))))
+    (if (not (equal? "feedgnuplot" bars-or-lines))
+      (graph-all-data-points bars-or-lines report-on rows)
+      (simple-data-output report-on rows)))))
   
+  (define (simple-data-output report-on rows)
+    (let (
+         (hours-hash (make-hash-table equal?))
+         (previous-name ""))
+          
+      (do-list row rows
+        (begin
+          (let (
+              (x (car row))
+              (hour (string->number (car (cdr row))))
+              (interrupts (last row)))
+            (if (not (list-includes (hash-table-keys hours-hash) hour))
+              (hash-table-set! hours-hash hour 0))
+            (hash-table-set! hours-hash hour 
+                             (+ interrupts (hash-table-ref hours-hash hour)))
+
+
+
+          )
+        )
+      )
+      (let ((temp-file (create-temporary-file)))
+        (with-output-to-file temp-file 
+          (lambda ()
+            (do-list hour-key (range 0 24)
+              (if (not (list-includes (hash-table-keys hours-hash) hour-key))
+                (print "0")
+                (print (sprintf "~A"  (hash-table-ref hours-hash hour-key)))
+              )
+            )
+          )
+        )
+        ; (print (sprintf "temp-file: ~A" temp-file))
+      (system (sprintf "cat ~A | feedgnuplot --lines --points --title '~A' --y2 1 --terminal 'dumb ~A,~A' --exit ; rm ~A" 
+                       temp-file 
+                       (title-for-report (sprintf "~A-feedgnuplot" report-on)) 
+                       80 ;(get-environment-variable "COLUMNS")
+                       20 ;(get-environment-variable "LINES") 
+                       temp-file ))
+      )
+    )
+  )
+  (define (graph-all-data-points bars-or-lines report-on rows)
+    (let ((series-data '())
+         (hours-hash (make-hash-table equal?))
+         (x->hour->value (make-hash-table equal?))
+         (previous-name ""))
+      (do-list row rows
+       (begin
+        ; make the new hash
+        ;(print (sprintf "graph row: ~A - car: ~A" row (car row)))
+        (let ((row-hash (make-hash-table equal?))
+              (x (car row))
+              (hour (car (cdr row)))
+              (interrupts (last row)))
+         ; and the new entry
+         (hash-table-set! row-hash "meta" x)
+         (hash-table-set! row-hash "value" interrupts)
+         (if (not (list-includes (hash-table-keys x->hour->value) x))
+          (hash-table-set! x->hour->value x (make-hash-table equal?)))
+         (hash-table-set! (hash-table-ref x->hour->value x)
+                          hour
+                          interrupts)
+         (hash-table-set! hours-hash hour #t))))
+      ; OK Now we have the hashes for everyone's time
+      ; let's fill in the hours they don't have
+      (do-list x (sort-strings< (hash-table-keys x->hour->value))
+       (do-list hour (sort-strings< (hash-table-keys hours-hash))
+        (let ((value (if (list-includes
+                          (hash-table-keys
+                           (hash-table-ref x->hour->value x))
+                          hour)
+                      (hash-table-ref (hash-table-ref x->hour->value x)
+                                      hour)
+                      0)))
+         (let ((row-hash (make-hash-table equal?)))
+          (hash-table-set! row-hash "meta" x)
+          (hash-table-set! row-hash "value" value)
+          (if (not (equal? x previous-name))
+           (begin
+            (set! series-data (append series-data (list (list row-hash))))
+            (set! previous-name x))
+           (begin
+            (let ((replacement (append (last series-data) (list row-hash))))
+             (set! series-data
+                   (replace-nth (last-index series-data)
+                                ; nth
+                                replacement
+
+                                ; replacement
+                                series-data)))))))))
+        ; data's built
+        ; let's generate the report
+      (open-url (generate-graph-url bars-or-lines
+                                  (sort-strings< (hash-table-keys hours-hash))
+                                  series-data
+                                  (title-for-report report-on)))
+    )
+  )
+
   (define (title-for-report x)
     (cond
       ((equal? x "tags") "Interruptions by tag by, by hour.")
+      ((equal? x "tags-feedgnuplot") "Interruptions by hour.")
       ((equal? x "people") "Interruptions by person, by hour.")
+      ((equal? x "people-feedgnuplot") "Interruptions by hour.")
       ))
   
   (define (query-for x)
