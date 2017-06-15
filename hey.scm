@@ -228,7 +228,7 @@
     ((equal? "people-by-hour" (car args))
      (graph-x-by-hour "people" (cdr args) (open-db)))
     ((equal? "interrupts-fgp" (car args))
-     (graph-x-by-hour "people" '("feedgnuplot") (open-db)))
+     (graph-x-by-hour "summary" '("feedgnuplot") (open-db)))
     ((equal? "tags-by-hour" (car args))
      (graph-x-by-hour "tags" (cdr args) (open-db)))
     ((equal? "interrupts-by-day" (car args))
