@@ -2,6 +2,7 @@
 source bash_files/ask.sh
 
 function compile_modules {
+	echo "compiling modules"
 	csc -emit-all-import-libraries -explicit-use listicles.scm
 	csc -emit-all-import-libraries -explicit-use interrupt-database.scm
 	csc -emit-all-import-libraries -explicit-use uri-tools.scm
