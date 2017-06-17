@@ -3,7 +3,9 @@
     create-tag
     find-id-of-person
     create-person
-    find-person-by-name
+    create-people
+    find-or-create-person
+    find-or-create-people
     find-id-of-tag
     create-event
     find-event-by-id
@@ -19,11 +21,40 @@
 
  (require-extension sql-de-lite)
  (use loops)
+ (use srfi-1)
+ (use srfi-13)
+ (use listicles)
 
+  (use extras)
  ;----------------------------------------------------------------------------
  ; core
  (define (load-db-at-path path)
   (open-database path))
+
+  ; 23> (append-marks-for-binding "" 4 #f)
+  ; "?, ?, ?, ?"
+  ; 24> (append-marks-for-binding "" 4 #t)
+  ; "(?), (?), (?), (?)"
+  (define (append-marks-for-binding string number parens)
+    (if (> number 0)
+      (if (not (= number 1))
+        (append-marks-for-binding (string-append string 
+                                                 (if parens "(?), " "?, ")) 
+                                  (- number 1)
+                                  parens)
+        (append-marks-for-binding (string-append string 
+                                                 (if parens "(?)" "?"))
+                                  (- number 1)
+                                  parens)
+        )
+      string
+      ))
+
+ (define (bind-many-params s params)
+  (do-list idx-param (zip (range 1 (length params)) params)
+      (bind s (first idx-param) (last idx-param))))
+                   
+ 
 
  ;----------------------------------------------------------------------------
  ; tags
@@ -73,13 +104,66 @@
   (finalize s)
   (find-id-of-person name db))
 
+ (define (create-people names db)
+  (let ((sql 
+          (append-marks-for-binding 
+            "INSERT INTO people (name) values "
+            (length names)
+            #t)))
+    (define s (prepare db (string-append sql ";")))
+    (bind-many-params s names)
+    (step s)
+    (finalize s)
+   ))
+
  (define (find-id-of-person name db)
   (query fetch-value
          (sql db "SELECT id FROM people WHERE name=? limit 1;")
          name))
 
- (define (find-person-by-name name db)
-  (query fetch-value (sql db "SELECT id FROM people where name = ?;") name))
+ (define (find-id-and-name-of-people names db)
+  (let ((sql-start "SELECT id, name FROM people WHERE name in (")
+        (sql-end ");"))
+    
+    ;binding ready
+    (let ((sql (string-append (append-marks-for-binding sql-start (length names) #f)
+                   sql-end)))
+    (define s (prepare db sql))
+    (bind-many-params s names)
+    (fetch-all s)
+    )
+  )
+  )
+ 
+ (define (find-or-create-person name db)
+   (let ((id (find-id-of-person name db)))
+    (if (not (equal? id #f))
+     id
+     (create-person name db))))
+
+ (define (find-or-create-people names db)
+   (let ((existing-ids-and-names 
+           (find-id-and-name-of-people names db))
+         )
+     (if (= (length existing-ids-and-names) (length names))
+        (map (lambda(lst)(first lst)) 
+                   existing-ids-and-names)
+        (begin 
+         (let ((matched-names (map (lambda(lst)(last lst)) existing-ids-and-names)))
+              ; double map seems terrible but it's really going to be a very small
+              ; list - probably 1-3 items
+              (let ((unmatched-names (lset-difference equal? names matched-names)))
+                (if (> (length unmatched-names) 0) ; damn well better be
+                (begin 
+                  (create-people unmatched-names db)
+                  (find-or-create-people names db)
+                ))
+
+              )
+           )
+         )
+      )
+   ))
 
  ;----------------------------------------------------------------------------
  ; events

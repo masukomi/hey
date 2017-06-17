@@ -36,31 +36,44 @@
 ; SET UP FUNCTIONS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; CORE FUNCTIONALITY
-(define (find-or-create-person name db)
- (let ((id (find-id-of-person name db)))
-  (if (not (equal? id #f))
-   id
-   (create-person name db))))
+
 
 (define (create-entry people-and-tags db)
- (let ((people '())
-       (people-ids '())
-       (includes-tags #f)
-       (tags '()))
-  (do-list name people-and-tags
-   (if (and (not (equal? "+tag" name))
-            (not includes-tags))
-    (begin
-     (set! people-ids (cons (find-or-create-person name db) people-ids))
-     (set! people (cons name people)))
-    (if (not (equal? "+tag" name))
-     (set! tags (cons name tags))
-     (set! includes-tags #t))))
-  (create-event people-ids db)
-  (print (sprintf "Gotcha. New ~A event" (string-join people ", ")))
-  (if (not (null? tags))
-   (let ((event-id (get-last-event-id db)))
-    (tag-event tags event-id db)))))
+ 
+  (let ((people-and-tags-lists (separate-people-from-tags people-and-tags)))
+    (let (
+          (people (first people-and-tags-lists))
+          (tags (last people-and-tags-lists)))
+      (let ((people-ids (find-or-create-people people db)))
+
+        (create-event people-ids db)
+        (print (sprintf "Gotcha. New ~A event" (string-join people ", ")))
+        (if (not (null? tags))
+         (let ((event-id (get-last-event-id db)))
+          (tag-event tags event-id db)))
+
+      )
+    )
+  )
+ )
+
+(define (separate-people-from-tags people-and-tags)
+  (let ((people '())
+        (includes-tags #f)
+        (tags '()))
+    (do-list name people-and-tags
+     (if (and (not (equal? "+tag" name))
+              (not includes-tags))
+      ; this is a name
+      (begin 
+       (set! people (cons name people)))
+      ; this is a tag or the indication of future tags
+      (if (not (equal? "+tag" name))
+       (set! tags (cons name tags))
+       (set! includes-tags #t))))
+    (list people tags)
+  )
+)
 
 (define (downcase-list items)
  (map (lambda (item)
@@ -153,7 +166,7 @@
 
 (define (delete-person name)
  (let ((db (open-db)))
-  (let ((person-id (find-person-by-name name db)))
+  (let ((person-id (find-id-of-person name db)))
    (if (not (equal? person-id #f))
     (begin
      ; TODO: stick this in a transaction
