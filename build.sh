@@ -9,6 +9,7 @@ function compile_modules {
 	csc -emit-all-import-libraries -explicit-use hey-dates.scm
 	csc -emit-all-import-libraries -explicit-use x-by-hour-report.scm
 	csc -emit-all-import-libraries -explicit-use interrupts-by-day-report.scm
+	csc -emit-all-import-libraries -explicit-use fmt-better.scm
 }
 function copy_modules_into_libs {
 	if [ ! -d hey_libs ]; then
@@ -22,6 +23,7 @@ function copy_modules_into_libs {
 	cp interrupt-database hey_libs/
 	cp x-by-hour-report hey_libs/
 	cp interrupts-by-day-report hey_libs/
+	cp fmt-better hey_libs/
 }
 function build_libraries {
 	if [ -d "hey_libs" ]; then

@@ -5,4 +5,5 @@ interrupts-by-day-report
 x-by-hour-report
 uri-tools
 interrupt-database
+fmt-better
 scratchpad.scm
