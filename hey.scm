@@ -146,8 +146,8 @@
     (print (sprintf "I couldn't find an event with the id ~A" id))))))
 
 ; TODO: delete person and delete event are almost identical. Refactor them
-(define (data)
- (print "asked to provide data"))
+; (define (data)
+;  (print "asked to provide data"))
 
 (define (delete-entry event-id)
  (let ((db (open-db)))
@@ -254,7 +254,36 @@
 
 (define (help)
  (print
-  "Usage instructions are at https://interrupttracker.com/usage.html\nGeneral info is available at https://interrupttracker.com/\n\nI'm @masukomi on Twitter and happy to help there."))
+  "Usage instructions are at https://interrupttracker.com/usage.html
+General info is available at https://interrupttracker.com/
+
+Available commands: 
+* hey
+  * lists recent events
+* hey <name> 
+  * creates an event associated with <name>
+* hey <name> +tag <space separated tags>
+  * creates an event associated with <name> and the specified tags
+* hey list
+  * lists recent events
+* hey who
+  * lists all the people you've been interrupted by, and the tags associated with
+    their interruptions. Sorted by number of interruptions.
+* hey kill <name>
+  * deletes that person, and any events linked exclusively to them
+* hey tag <\"last\" or event number> <space separated tags>
+  * tags the specified event with the specified tags
+  * running it again on the same event adds tags to it
+* hey tags
+  * displays a sorted list of all tags that have been entered into the system
+* hey graph <graph type>
+  * run hey graph with no 3rd parameter to see available graph types
+* hey --version & hey -v
+  * displays the current version of hey
+* hey help
+  * displays this help message
+
+I'm @masukomi on Twitter and happy to help there."))
 
 (define (list-who args)
   (graph-who args (open-db)))
@@ -329,8 +358,8 @@
     (delete-entry (second args)))
    ((equal? command "kill")
     (delete-person (second args)))
-   ((equal? command "data")
-    (data (car args)))
+   ; ((equal? command "data")
+   ;  (data (car args)))
    ((equal? command "graph")
     (graph (cdr args)))
    (else
@@ -342,7 +371,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define recognized-commands
- '("tag" "retag" "delete" "kill" "data" "list" "who" "comment" "graph" "--version" "-v" "help" "tags"))
+ '("tag" "delete" "kill" "list" "who" "comment" "graph" "--version" "-v" "help" "tags"))
 (define (main args)
  (let ((downcased-args (downcase-list args)))
   (if (> (length downcased-args) 1)
