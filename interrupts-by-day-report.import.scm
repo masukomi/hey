@@ -9,7 +9,8 @@
          extras
          loops
          listicles
-         uri-tools))
+         uri-tools
+         data-structures))
 (##sys#register-compiled-module
   'interrupts-by-day-report
   (list)
