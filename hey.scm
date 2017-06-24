@@ -32,6 +32,7 @@
 (use interrupt-database)
 (use x-by-hour-report)
 (use interrupts-by-day-report)
+(use who-list)
 
 ; SET UP FUNCTIONS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -255,6 +256,9 @@
  (print
   "Usage instructions are at https://interrupttracker.com/usage.html\nGeneral info is available at https://interrupttracker.com/\n\nI'm @masukomi on Twitter and happy to help there."))
 
+(define (list-who args)
+  (graph-who args (open-db)))
+
 (define (list-events)
 
  (let ((days-ago 3))
@@ -305,6 +309,8 @@
     (list-events))
    ((equal? command "list")
     (list-events))
+   ((equal? command "who")
+    (list-who (cdr args)))
    ((equal? command "--version")
     (version))
    ((equal? command "-v")
@@ -336,7 +342,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define recognized-commands
- '("tag" "retag" "delete" "kill" "data" "list" "comment" "graph" "--version" "-v" "help" "tags"))
+ '("tag" "retag" "delete" "kill" "data" "list" "who" "comment" "graph" "--version" "-v" "help" "tags"))
 (define (main args)
  (let ((downcased-args (downcase-list args)))
   (if (> (length downcased-args) 1)
