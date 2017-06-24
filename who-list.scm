@@ -48,18 +48,34 @@ order by p.name, ep.event_id;")) )
 
       (fmt-rows (append 
                   (list '("Who" "Interrupts" "Tags" ))
-                  (map (lambda(name)
-                        (list 
-                          name
-                          (number->string (hash-table-ref people->interrupts name))
-                          (string-join
-                            (hash-table-ref people->tags name) ", ")
-                         )
-                     ) 
-                     names)) " | ")
+                  (stringify-interrupt-counts
+                    (sort-rows-by-interrupts
+                      (data-hashes-to-rows people->interrupts people->tags names)))
+                  ) " | ")
     ); end let names
   ); end let hashes
 ) ;end define
+
+(define (sort-rows-by-interrupts rows)
+  (sort rows (lambda(a b)
+               (< (second a) (second b)))))
+
+(define (stringify-interrupt-counts rows)
+  (map (lambda(row)(list (first row) 
+                         (number->string (second row))
+                         (third row))) rows))
+
+(define (data-hashes-to-rows people->interrupts people->tags names)
+  (map (lambda(name)
+          (list 
+            name
+            (hash-table-ref people->interrupts name)
+            (string-join
+              (hash-table-ref people->tags name) ", ")
+           )
+       ) 
+       names))
+
 (define (row-has-name? row name)
   (equal? name (first row)))
 
