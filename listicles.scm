@@ -1,22 +1,26 @@
-
 (module listicles
   (
    nth
    range
    split-by
    list-includes
-   flatten
    pairs-list-to-hash
    replace-nth
    last-index
    sort-strings>
    sort-strings<
+   convert-rows-to-cols
   )
   (import chicken)
   (import scheme)
   (import srfi-1)
   (import srfi-69)
   (use extras)
+  (use data-structures)
+  (use loops)
+  ;TODO get rid of the do-list code so that we can jetison the 
+  ; dependency on loops
+  
   ; (doc-fun "nth" 
   ;   "## Public: 
   ;   returns the \"nth\" item of a list
@@ -132,10 +136,10 @@
       (if (eq? index #f)
         #f #t)))
 
-  (define (flatten a-list)
-    (cond ((null? a-list) '())
-          ((pair? a-list) (append (flatten (car a-list)) (flatten (cdr a-list))))
-          (else (list a-list))))
+  ; (define (flatten a-list)
+  ;   (cond ((null? a-list) '())
+  ;         ((pair? a-list) (append (flatten (car a-list)) (flatten (cdr a-list))))
+  ;         (else (list a-list))))
 
   (define (pairs-list-to-hash pairs-list)
     (let ((h (make-hash-table equal?)))
@@ -151,12 +155,42 @@
     (reverse (sort-strings> lst))) ; cheat!
 
 
-(define (insert-string> s lst)
-  (cond
-    ((null? lst) (cons s '()))
-    (else
-      (if (string>=? s (first lst))
-              (cons s lst)
-              (cons (first lst) (insert-string> s (cdr lst)))))))
+  (define (convert-rows-to-cols rows)
+    (let ((cols-hash (make-hash-table equal?)))
+      (do-list row rows
+        (extract-cols row cols-hash 0)
+               )
+      (let ((indexes 
+              (sort (hash-table-keys cols-hash) > )))
+          (do-list idx indexes 
+            (hash-table-set!  cols-hash idx (reverse 
+                                              (hash-table-ref cols-hash idx))))
+          ; values are now straight lists not dotted pairs
+          (reverse (map (lambda (idx2)(hash-table-ref cols-hash idx2)) indexes))
+        )))
+  
+
+
+
+; INTERNAL METHODS
+
+  (define (insert-string> s lst)
+    (cond
+      ((null? lst) (cons s '()))
+      (else
+        (if (string>=? s (first lst))
+                (cons s lst)
+                (cons (first lst) (insert-string> s (cdr lst)))))))
+
+
+
+  ; populates the hash with a reversed list for the specified idx
+  ; used by convert-rows-to-cols
+  (define (extract-cols row cols-hash idx)
+    (if (not (null? row))
+      (begin 
+        (hash-table-set! cols-hash idx
+          (cons (car row) (hash-table-ref/default cols-hash idx '()) ))
+        (extract-cols (cdr row) cols-hash (+ 1 idx)))))
 
 )
