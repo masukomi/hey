@@ -118,6 +118,21 @@ ID | Who       | When                 | Tags
 5. | Mary      | 4/12/18 09:22        | task list
 ```
 
+#### Seeing who's been interrupting you and why
+
+`hey who`
+
+```
+ | Who        | Interrupts | Tags                                                      |
+ | simon      | 3          | manager, question                                         |
+ | roman      | 5          | manager, question                                         |
+ | andres     | 9          | investigation, question, tl                               |
+ | nima       | 10         | merge_request, question, random, request, tl,             |
+ | sonal      | 10         | coordination, instructions, planning, question, tl        |
+ | greg       | 11         | pairing, question, release_request, tl                    |
+ | mike_o     | 13         | beginner, pair_request, question, tl, undocumented        |
+```
+
 #### Reporting on recent events
 `hey graph` will list all graphing options
 
@@ -167,7 +182,11 @@ Lists all the tags currently in the system.
 when you hit enter.
 
 Note if you comment on the same event twice it will replace the existing
-comment with your new one.
+comment with your new one. 
+
+**Unfortunately** none of the current reports expose these comments.
+There is [an open ticket](https://github.com/masukomi/hey/issues/11) to make
+these visible. If you want to record them now they will eventually be displayed.
 
 #### Delete accidental interrupts
 `hey delete <event id>`
