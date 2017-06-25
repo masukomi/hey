@@ -367,7 +367,7 @@ I'm @masukomi on Twitter and happy to help there."))
 
 (define (version)
  (print
-  "Hey version 0.7.0\nCopyright 2017 Kay Rhodes\nDistributed under the MIT License.\nWritten in Chicken Scheme."))
+  "Hey version 0.8.0\nCopyright 2017 Kay Rhodes\nDistributed under the MIT License.\nWritten in Chicken Scheme."))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define recognized-commands
