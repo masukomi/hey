@@ -89,6 +89,9 @@ function build_tarball {
 	mv $tarball ../
 	cd ../
 	rm -rf $tempdir
+	if ask "upload to interrupttracker.com?"; then
+		scp $tarball interrupttracker.com:interrupttracker.com/
+	fi
 }
 
 function build_mac {
