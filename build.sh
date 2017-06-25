@@ -69,6 +69,27 @@ function build_local {
 	fi
 }
 
+function build_tarball {
+	compile_modules
+	build_local
+	version=$(./hey --version | grep version | sed -e "s/.* //")
+	echo "version: $version"
+	tempdir="tarball_temp"
+	if [ -e $tempdir ]; then 
+		rm -rf $tempdir
+	fi
+	hey_version_name="hey-$version"
+	hey_tempdir="$tempdir/$hey_version_name"
+	tarball="$hey_version_name.tar.gz"
+	echo "building $tarball"
+	mkdir -p $hey_tempdir
+	cp -r hey_libs/* $hey_tempdir/
+	cd $tempdir
+	tar -czf $tarball $hey_version_name
+	mv $tarball ../
+	cd ../
+	rm -rf $tempdir
+}
 
 function build_mac {
 	compile_modules
@@ -100,7 +121,7 @@ function build_mac {
 
 deploy_type=$1
 if [ "$deploy_type" = "" ]; then
-	echo "deploy type? [libraries|local|mac|linux|dmg|modules]: "
+	echo "deploy type? [libraries|local|mac|linux|dmg|modules|tarball]: "
 	read deploy_type
 fi
 
@@ -115,6 +136,8 @@ elif [ "$deploy_type" = "modules" ]; then
 	compile_modules
 elif [ "$deploy_type" = "mac" ]; then
 	build_mac
+elif [ "$deploy_type" = "tarball" ]; then
+	build_tarball
 elif [ "$deploy_type" = "linux" ]; then
 	compile_modules
 	copy_modules_into_libs
