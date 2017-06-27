@@ -165,6 +165,16 @@
       (finalize s)))
     (print (sprintf "I couldn't find an event with the id ~A" event-id))))))
 
+(define (kill type args)
+  (cond
+    ((equal? "person" type)
+     (delete-person (car args)))
+    ((equal? "event" type)
+     (delete-entry (car args)))
+     (else
+       (print (sprintf "Not sure how to kill a \"~A\"" type))))
+  )
+
 (define (delete-person name)
  (let ((db (open-db)))
   (let ((person-id (find-id-of-person name db)))
@@ -269,8 +279,9 @@ Available commands:
 * hey who
   * lists all the people you've been interrupted by, and the tags associated with
     their interruptions. Sorted by number of interruptions.
-* hey kill <name>
-  * deletes that person, and any events linked exclusively to them
+* hey kill <thing> <identifier>
+  * thing must be \"person\" or \"event\"
+  * identifier must be \"last\", an event id, or a person's name.
 * hey tag <\"last\" or event number> <space separated tags>
   * tags the specified event with the specified tags
   * running it again on the same event adds tags to it
@@ -357,7 +368,7 @@ I'm @masukomi on Twitter and happy to help there."))
    ((equal? command "delete")
     (delete-entry (second args)))
    ((equal? command "kill")
-    (delete-person (second args)))
+    (kill (second args) (cdr (cdr args))))
    ; ((equal? command "data")
    ;  (data (car args)))
    ((equal? command "graph")
