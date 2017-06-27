@@ -132,8 +132,8 @@
     (comment-on-event comment-string id db)
     (print (sprintf "I couldn't find an event with the id ~A" id))))))
 
-(define (retag id args)
- (sprintf "asked to retag ~A with ~A" id args))
+; (define (retag id args)
+;  (sprintf "asked to retag ~A with ~A" id args))
 
 (define (list-tags)
   (print (sprintf "current tags: ~A" (string-join (find-tags (open-db)) ", ") )))
@@ -181,29 +181,14 @@
    (if (not (equal? person-id #f))
     (begin
      ; TODO: stick this in a transaction
-     (let ((persons-events (query
-                            fetch-all
-                            (sql
-                             db
-                             "select e.id, \n( select count(*) from events_people  where events_people.event_id = e.id) epc\nfrom\nevents e \ninner join events_people ep on ep.event_id = e.id\ninner join people p on ep.person_id = p.id\nwhere epc = 1\nand p.id = ?\ngroup by 1;")
-                            person-id))
-           (s (prepare db "delete from events_people where person_id=?;")))
-      (bind-parameters s person-id)
-      (step s)
-      (finalize s)
-      (set! s (prepare db "delete from people where id=?;"))
-      (bind-parameters s person-id)
-      (step s)
-      (finalize s)
+     (let ((persons-events (event-ids-with-person person-id db)))
+      (delete-event-with-person person-id db)
+      (delete-person-from-db person-id db)
       (if (> (length persons-events) 0)
-       (begin
         (let ((event-ids (map (lambda (x)
                                (number->string (car x)))
                               persons-events)))
-         (set! s (prepare db "delete from events where id in (?);"))
-         (bind-parameters s (string-join event-ids ", "))
-         (step s)
-         (finalize s)))
+          (delete-events-from-db event-ids db))
        (print (sprintf "found no events involving just ~A" name))))
      (print (sprintf "~A is dead. Long live ~A!" name name)))
     (print (sprintf "I couldn't find a person with the name ~A" name))))))
@@ -363,8 +348,8 @@ I'm @masukomi on Twitter and happy to help there."))
     (list-tags))
    ((equal? command "comment")
     (comment (second args) (string-join (cdr (cdr args)) " ")))
-   ((equal? command "retag")
-    (retag (second args) (cdr (cdr args))))
+   ; ((equal? command "retag")
+   ;  (retag (second args) (cdr (cdr args))))
    ((equal? command "delete")
     (delete-entry (second args)))
    ((equal? command "kill")

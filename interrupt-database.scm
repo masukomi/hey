@@ -6,6 +6,9 @@
     create-people
     find-or-create-person
     find-or-create-people
+    join-person-to-event
+    event-ids-with-person
+    delete-person-from-db
     find-id-of-tag
     create-event
     find-event-by-id
@@ -13,8 +16,9 @@
     join-tag-to-event
     join-tags-to-event
     event-has-tag?
+    delete-events-from-db
+    delete-events-with-person
     find-tags
-    join-person-to-event
     comment-on-event)
  (import chicken)
  (import scheme)
@@ -165,6 +169,31 @@
       )
    ))
 
+
+ (define (event-ids-with-person person-id db)
+  (query
+    fetch-all
+    (sql
+     db
+     "select e.id, \n( select count(*) from events_people  where events_people.event_id = e.id) epc\nfrom\nevents e \ninner join events_people ep on ep.event_id = e.id\ninner join people p on ep.person_id = p.id\nwhere epc = 1\nand p.id = ?\ngroup by 1;")
+    person-id))
+  
+  (define (delete-events-with-person person-id db)
+    (let ((s (prepare db "delete from events_people where person_id=?;")))
+      (bind-parameters s person-id)
+      (step s)
+      (finalize s)
+      )
+    )
+
+  (define (delete-person-from-db person-id db)
+    (let ((s (prepare db "delete from people where id=?;")))
+      (bind-parameters s person-id)
+      (step s)
+      (finalize s)
+      )
+    )
+
  ;----------------------------------------------------------------------------
  ; events
  (define (comment-on-event comment-string event-id db)
@@ -199,4 +228,13 @@
             "insert into events_people (event_id, person_id) values (?, ?);"))
   (bind-parameters s eid pid)
   (step s)
-  (finalize s)))
+  (finalize s))
+ 
+ (define (delete-events-from-db event-ids db)
+  (let ((s (prepare db "delete from events where id in (?);")))
+     (bind-parameters s (string-join event-ids ", "))
+     (step s)
+     (finalize s)
+    )
+   )
+)
