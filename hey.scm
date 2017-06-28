@@ -63,13 +63,13 @@
         (includes-tags #f)
         (tags '()))
     (do-list name people-and-tags
-     (if (and (not (equal? "+tag" name))
+     (if (and (not (equal? "+" name))
               (not includes-tags))
       ; this is a name
       (begin 
        (set! people (cons name people)))
       ; this is a tag or the indication of future tags
-      (if (not (equal? "+tag" name))
+      (if (not (equal? "+" name))
        (set! tags (cons name tags))
        (set! includes-tags #t))))
     (list people tags)
@@ -262,7 +262,7 @@ Available commands:
   * lists recent events
 * hey <name> 
   * creates an event associated with <name>
-* hey <name> +tag <space separated tags>
+* hey <name> + <space separated tags>
   * creates an event associated with <name> and the specified tags
 * hey list
   * lists recent events

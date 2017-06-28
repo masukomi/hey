@@ -97,7 +97,7 @@ Most of the time you create an event as it happens, and you don't know what it's
 going to be about yet, so you create it, then tag it later. But sometimes you
 create it just _after_ it happened and you _do_ know what it was about.
 
-`hey <names> +tag <tags>`
+`hey <names> + <tags>`
 
 `<names>` is a space separated list of one or more
 people's names.
