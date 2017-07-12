@@ -259,8 +259,9 @@ Available commands:
   * creates an event associated with <name>
 * hey <name> + <space separated tags>
   * creates an event associated with <name> and the specified tags
-* hey list
+* hey list [number]
   * lists recent events
+  * defaults to 25
 * hey who
   * lists all the people you've been interrupted by, and the tags associated with
     their interruptions. Sorted by number of interruptions.
@@ -284,18 +285,14 @@ I'm @masukomi on Twitter and happy to help there."))
 (define (list-who args)
   (graph-who args (open-db)))
 
-(define (list-events)
-
- (let ((days-ago 3))
+(define (list-events args)
+ (let ((num-events (if (null? args) 25 (car args))))
    (let ((row-data '())
-         (midnight-yesterday 
-           (date->sqlite-string 
-             (date-at-midnight-x-days-ago 3 (current-seconds))))
          (db (open-db)))
-    (print (sprintf "Last ~A day's interruptions in chronological order...\n" days-ago))
+    (print (sprintf "Last ~A interruptions in chronological order...\n" num-events))
     (do-list row (query fetch-rows (sql db 
-      "SELECT e.id, datetime(e.created_at, 'localtime') FROM events e where created_at > ? order by e.created_at desc;")
-                        midnight-yesterday)
+      "SELECT e.id, datetime(e.created_at, 'localtime') FROM events e order by e.created_at desc limit ?;")
+                        num-events)
      (set! row-data (cons (get-event-display-data row db) row-data)))
     (let ((id-column (map (lambda (x)
                            (sprintf "~A" (car (nth 0 x))))
@@ -333,7 +330,7 @@ I'm @masukomi on Twitter and happy to help there."))
    ((null? command)
     (list-events))
    ((equal? command "list")
-    (list-events))
+    (list-events (cdr args)))
    ((equal? command "who")
     (list-who (cdr args)))
    ((equal? command "--version")

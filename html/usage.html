@@ -70,15 +70,18 @@ people's names.
 
 <h4 id="viewingrecentevents">Viewing recent events</h4>
 
-<p><code>hey list</code></p>
-<pre><code class="(null)">Recent interrupts: Chronological order
-Starting at midnight yesterday. 
+<p><code>hey</code> or <code>hey list</code> or <code>hey list 3</code></p>
 
-ID | Who       | When                 | Tags
-2. | Bob, Mary | 4/12/17 14:23        | meeting, scheduled
-3. | Bob       | 4/12/17 14:26        |
-4. | Sam       | 4/12/17 16:11        | question 
-5. | Mary      | 4/12/18 09:22        | task list</code></pre>
+<p>by default this will display the last 25 interruptions, but if you pass 
+<code>hey list</code> a number it will display that many.</p>
+
+<pre><code class="(null)">Last 3 interruptions in chronological order...
+
+ | ID  | When                | Who       | Tags               |
+ | 105 | 2017-06-17 08:53:48 | Bob, Mary | meeting, scheduled |
+ | 106 | 2017-06-17 08:53:55 | Bob       | question           |
+ | 109 | 2017-06-28 11:35:05 | Sam       | task               |
+</code></pre>
 
 <h4 id="whoandwhy">Seeing who's been interrupting you and why</h4>
 <p><code>hey who</code></p>

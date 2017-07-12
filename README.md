@@ -105,17 +105,17 @@ people's names.
 `<tags>` is a space separated list of tags to associated with this event.
 
 #### Viewing recent events
-`hey list`
+`hey` `hey list` or `hey list 3`
+
+Shows you the most recent interruptions. Defaults to 25.
 
 ```
-Recent interrupts: Chronological order
-Starting at midnight yesterday. 
+Last 25 interruptions in chronological order...
 
-ID | Who       | When                 | Tags
-2. | Bob, Mary | 4/12/17 14:23        | meeting, scheduled
-3. | Bob       | 4/12/17 14:26        |
-4. | Sam       | 4/12/17 16:11        | question 
-5. | Mary      | 4/12/18 09:22        | task list
+ | ID  | When                | Who       | Tags               |
+ | 105 | 2017-06-17 08:53:48 | Bob, Mary | meeting, scheduled |
+ | 106 | 2017-06-17 08:53:55 | Bob       | question           |
+ | 109 | 2017-06-28 11:35:05 | Sam       | task               |
 ```
 
 #### Seeing who's been interrupting you and why
