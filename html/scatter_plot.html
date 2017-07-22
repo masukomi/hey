@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title id="title">Interrupt Tracker Line Chart</title>
+    <link rel="stylesheet"
+          href="https://interrupttracker.com/css/chartist.min.css">
+    <script src="https://interrupttracker.com/javascript/chartist.min.js"></script>
+    <script src="https://interrupttracker.com/javascript/chartist-plugin-tooltip.min.js"></script>
+    <link href="https://interrupttracker.com/css/chartist-plugin-tooltip.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="https://interrupttracker.com/css/LemonYellowSunWebfontsKit.css"/>
+    <link rel="stylesheet" type="text/css" href="https://interrupttracker.com/css/hey.css"/>
+
+    <script>
+      Chartist.precision = 0;
+      function getParameterByName(name, url) {
+          if (!url) url = window.location.href;
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+              results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return '';
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+    </script>
+  </head>
+  <body>
+    <div class="header">
+      <span class="logo_holder">
+        <a href="https://interrupttracker.com"><img
+           src="https://interrupttracker.com/images/hey_plus_text_icon.svg" id="logo" align="left" /></a>
+      </span>
+      <h3 class="LemonYellowSun page_header" id="page_header"></h3>
+    </div>
+    <div class="ct-chart ct-perfect-fourth graph_box"></div>
+    <!-- Site content goes here !-->
+    <script>
+      var demo_title = "Interruptions by person, by hour.";
+      var demo_labels = ["10", "11", "12", "13"]
+        // a simple example with no metadata
+        // var demo_series = [
+        //   [12, 9, 7, 8, 5],
+        //   [2, 1, 3.5, 7, 3],
+        //   [1, 3, 4, 5, 6]
+        // ];
+        //
+      var demo_series =  [ // TODO extract this from url
+          [
+            {meta: 'tom', value: 1}, // 9AM
+            {meta: 'tom', value: 2}, // 10AM
+            {meta: 'tom', value: 3}, // 11AM
+            {meta: 'tom', value: 8}  // 12PM
+          ],
+          [
+            {meta: 'dick', value: 2},
+            {meta: 'dick', value: 1},
+            {meta: 'dick', value: 1},
+            {meta: 'dick', value: 3}
+          ],
+          [
+            {meta: 'harry', value: 4},
+            {meta: 'harry', value: 1},
+            {meta: 'harry', value: 3},
+            {meta: 'harry', value: 1}
+          ]
+
+        ];
+
+      var final_title = demo_title;
+      var temp_title = getParameterByName('title');
+      if (temp_title != null){
+        final_title = temp_title;
+      }
+      document.getElementById("title").innerHTML = final_title;
+      document.getElementById("page_header").innerHTML = final_title;
+
+      var final_labels = demo_labels;
+      try {
+        temp_labels = eval(getParameterByName('labels'));
+        if (temp_labels != null){
+          final_labels = temp_labels;
+        }
+      } catch (err) {
+        console.log("problem extracting labels from query string:");
+        console.log(err);
+      }
+
+      var final_series = demo_series;
+      try {
+        temp_series = eval(getParameterByName('series'));
+        if (temp_series != null ){
+          final_series = temp_series;
+        }
+      } catch (err) {
+        console.log("problem extracting series from query string:");
+        console.log(err);
+      }
+
+      new Chartist.Line('.ct-chart', {
+        labels: final_labels,
+        series: final_series
+      }, {
+        stackBars: true,
+        showLine: false,
+        axisX: {
+        },
+        low: 0,
+        plugins: [
+          Chartist.plugins.tooltip()
+        ]
+      }).on('draw', function(data) {
+        if(data.type === 'bar') {
+          data.element.attr({
+            style: 'stroke-width: 30px'
+          });
+        }
+      });
+
+    </script>
+    <div id="footer">
+      <a href="htts://interrupttracker.com/">Hey</a> is copyright (c) 2017 Kay Rhodes. The <a
+         href="https://gionkunz.github.io/chartist-js/index.html">Chartist
+         graphing library</a> is copyright (c) 2013 Gion Kunz. Both are distributed
+       under the MIT license.
+    </div>
+  </body>
+</html>
+

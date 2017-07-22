@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title id="title">Interrupt Tracker Line Chart</title>
+    <link rel="stylesheet"
+          href="https://interrupttracker.com/css/chartist.min.css">
+    <script src="https://interrupttracker.com/javascript/chartist.min.js"></script>
+    <script src="https://interrupttracker.com/javascript/chartist-plugin-tooltip.min.js"></script>
+    <link href="https://interrupttracker.com/css/chartist-plugin-tooltip.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="https://interrupttracker.com/css/LemonYellowSunWebfontsKit.css"/>
+    <link rel="stylesheet" type="text/css" href="https://interrupttracker.com/css/hey.css"/>
+
+    <script>
+      Chartist.precision = 0;
+    </script>
+  </head>
+  <body>
+    <div class="header">
+      <span class="logo_holder">
+        <a href="https://interrupttracker.com"><img
+           src="https://interrupttracker.com/images/hey_plus_text_icon.svg" id="logo" align="left" /></a>
+      </span>
+      <h3 class="LemonYellowSun page_header" id="page_header"></h3>
+    </div>
+    <div class="ct-chart ct-perfect-fourth graph_box"></div>
+    <!-- Site content goes here !-->
+    <script>
+      var final_title  = FINAL_TITLE_HERE;
+      var final_labels = FINAL_LABELS_HERE;
+      var final_series = FINAL_SERIES_HERE;
+
+      document.getElementById("title").innerHTML = final_title;
+      document.getElementById("page_header").innerHTML = final_title;
+
+      new Chartist.Line('.ct-chart', {
+        labels: final_labels,
+        series: final_series
+      }, {
+        stackBars: true,
+        showLine: false,
+        axisX: {
+        },
+        low: 0,
+        plugins: [
+          Chartist.plugins.tooltip()
+        ]
+      }).on('draw', function(data) {
+        if(data.type === 'bar') {
+          data.element.attr({
+            style: 'stroke-width: 30px'
+          });
+        }
+      });
+
+    </script>
+    <div id="footer">
+      <a href="htts://interrupttracker.com/">Hey</a> is copyright (c) 2017 Kay Rhodes. The <a
+         href="https://gionkunz.github.io/chartist-js/index.html">Chartist
+         graphing library</a> is copyright (c) 2013 Gion Kunz. Both are distributed
+       under the MIT license.
+    </div>
+  </body>
+</html>
+
