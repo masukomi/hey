@@ -167,7 +167,6 @@ from
   events e 
   inner join events_tags et on et.event_id = e.id
   inner join tags t on et.tag_id = t.id
-where e.created_at > date('now', '-7 days')
 group by 2, 1
 order by t.name asc;")
       ((equal? x "people")
@@ -178,7 +177,6 @@ from
   events e 
   inner join events_people ep on ep.event_id = e.id
   inner join people p on ep.person_id = p.id
-where e.created_at > date('now', '-7 days')
 group by 2, 1
 order by p.name asc;")
       ((equal? x "summary")
