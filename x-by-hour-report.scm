@@ -142,7 +142,7 @@
       ;                             (sort-strings< (hash-table-keys hours-hash))
       ;                             series-data
       ;                             (title-for-report report-on)))
-      (print (post-graph-data 
+      (open-url (post-graph-data 
         bars-or-lines 
         (sort-strings< (hash-table-keys hours-hash))
         series-data
