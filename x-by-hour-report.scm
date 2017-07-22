@@ -138,10 +138,15 @@
                                 series-data)))))))))
         ; data's built
         ; let's generate the report
-      (open-url (generate-graph-url bars-or-lines
-                                  (sort-strings< (hash-table-keys hours-hash))
-                                  series-data
-                                  (title-for-report report-on)))
+      ; (open-url (generate-graph-url bars-or-lines
+      ;                             (sort-strings< (hash-table-keys hours-hash))
+      ;                             series-data
+      ;                             (title-for-report report-on)))
+      (print (post-graph-data 
+        bars-or-lines 
+        (sort-strings< (hash-table-keys hours-hash))
+        series-data
+        (title-for-report report-on)))
     )
   )
 

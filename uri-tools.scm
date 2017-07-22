@@ -1,13 +1,41 @@
-(module uri-tools (generate-graph-url json->uri-string json->string open-url)
+(module uri-tools 
+  (generate-graph-url 
+    json->uri-string 
+    json->string open-url
+    post-graph-data)
  (import chicken)
  (import scheme)
 
  (use posix)
  (use ports)
  (use extras)
+ (use http-client)
 
  (require-extension uri-common)
  (require-extension json)
+
+  ;; Perform a POST of the key "test" with value "value" to an echo service:
+  ;; (with-input-from-request "http://localhost/echo-service"
+  ;;                        '((test . "value")) read-string)
+
+  (define (post-graph-data graph-type labels series title)
+    (let ((labels-string (json->string labels))
+          (series-string (json->string series)))
+      ; (print (sprintf "graph-type: ~A" graph-type))
+      ; (print (sprintf "title: ~A" title))
+      ; (print (sprintf "labels-string: ~A" labels-string))
+      ; (print (sprintf "series-string: ~A" series-string))
+      (with-input-from-request
+        "https://interrupttracker.com/graph.cgi"
+        (list 
+          (cons "graph_type" graph-type)
+          (cons "title"      title)
+          (cons "labels"     labels-string)
+          (cons "series"     series-string))
+        read-string
+      )
+    )
+  )
 
  (define (generate-graph-url graph-type labels series title)
   (let ((encoded-labels (json->uri-string labels))
