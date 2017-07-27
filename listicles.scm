@@ -4,6 +4,7 @@
    range
    split-by
    list-includes
+   mflatten
    pairs-list-to-hash
    replace-nth
    last-index
@@ -136,10 +137,10 @@
       (if (eq? index #f)
         #f #t)))
 
-  ; (define (flatten a-list)
-  ;   (cond ((null? a-list) '())
-  ;         ((pair? a-list) (append (flatten (car a-list)) (flatten (cdr a-list))))
-  ;         (else (list a-list))))
+  (define (mflatten a-list)
+    (cond ((null? a-list) '())
+          ((pair? a-list) (append (mflatten (car a-list)) (mflatten (cdr a-list))))
+          (else (list a-list))))
 
   (define (pairs-list-to-hash pairs-list)
     (let ((h (make-hash-table equal?)))

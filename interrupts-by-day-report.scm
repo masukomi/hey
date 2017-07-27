@@ -55,9 +55,9 @@ order by day asc;"))))
     )
     ; data's built
     ; let's generate the report
-    (open-url (generate-graph-url "line_chart"
-                            (flatten labels)
-                            (list (flatten series-data))
+    (open-url (post-graph-data "line_chart"
+                            (mflatten labels)
+                            (list (mflatten series-data))
                             "Interrupts By Day"
                             ))
     )))

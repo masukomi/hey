@@ -8,6 +8,7 @@
     (range . listicles#range)
     (split-by . listicles#split-by)
     (list-includes . listicles#list-includes)
+    (mflatten . listicles#mflatten)
     (pairs-list-to-hash . listicles#pairs-list-to-hash)
     (replace-nth . listicles#replace-nth)
     (last-index . listicles#last-index)

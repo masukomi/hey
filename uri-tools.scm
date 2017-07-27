@@ -10,6 +10,8 @@
  (use ports)
  (use extras)
  (use http-client)
+ (use data-structures)
+ (use listicles)
 
  (require-extension uri-common)
  (require-extension json)
@@ -38,8 +40,8 @@
   )
 
  (define (generate-graph-url graph-type labels series title)
-  (let ((encoded-labels (json->uri-string labels))
-        (encoded-series (json->uri-string series)))
+  (let ((encoded-labels (json->uri-string (mflatten labels)))
+        (encoded-series (json->uri-string (mflatten series))))
    (sprintf "https://interrupttracker.com/~A.html?title=~A&labels=~A&series=~A"
             graph-type
             (uri-encode-string title)
