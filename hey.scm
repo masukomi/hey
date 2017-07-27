@@ -328,7 +328,7 @@ I'm @masukomi on Twitter and happy to help there."))
               '(args))))
   (cond
    ((null? command)
-    (list-events))
+    (list-events args))
    ((equal? command "list")
     (list-events (cdr args)))
    ((equal? command "who")
