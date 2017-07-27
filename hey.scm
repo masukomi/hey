@@ -182,7 +182,7 @@
     (begin
      ; TODO: stick this in a transaction
      (let ((persons-events (event-ids-with-person person-id db)))
-      (delete-event-with-person person-id db)
+      (delete-events-with-person person-id db)
       (delete-person-from-db person-id db)
       (if (> (length persons-events) 0)
         (let ((event-ids (map (lambda (x)
