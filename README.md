@@ -67,6 +67,7 @@ Once you've got that just run
 ```
 ./build.sh libraries
 ./build.sh mac
+```
 
 #### Geeks on other platforms
 Hey is written in [Chicken Scheme](https://www.call-cc.org/), 
