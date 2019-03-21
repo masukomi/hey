@@ -1,4 +1,11 @@
 (Official homepage at [interrupttracker.com](https://interrupttracker.com))
+
+----
+
+Please note: This codebase was a quick hack that got out of hand. Hey 2.0 is a complete rewrite in Crystal that supports user-created reports. You can [check it out here](https://github.com/masukomi/hey_2). 
+
+----
+
 # Hey
 
 "Hey! I've got a question."  
