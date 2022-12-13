@@ -20,16 +20,14 @@
     delete-events-with-person
     find-tags
     comment-on-event)
- (import chicken)
  (import scheme)
 
- (require-extension sql-de-lite)
- (import loops)
+ (import sql-de-lite)
+ (import simple-loops)
  (import srfi-1)
  (import srfi-13)
  (import listicles)
 
-  (import extras)
  ;----------------------------------------------------------------------------
  ; core
  (define (load-db-at-path path)

@@ -10,3 +10,5 @@ fmt-better
 who-list
 scratchpad.scm
 hey*.tar.gz
+*.o
+*.link

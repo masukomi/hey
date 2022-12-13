@@ -3,16 +3,15 @@
     json->uri-string 
     json->string open-url
     post-graph-data)
- (import chicken)
  (import scheme)
 
- (import posix)
- (import ports)
- (import extras)
+ (import chicken.file.posix)
+ (import chicken.io)
+ (import chicken.base)
+ (import chicken.process)
  (import http-client)
- (import data-structures)
  (import listicles)
-
+ (import chicken.format)
  (import uri-common)
  (import json)
 

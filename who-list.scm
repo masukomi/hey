@@ -1,15 +1,15 @@
 (module who-list (graph-who)
- (import chicken)
  (import scheme)
  (import srfi-1)
  (import srfi-13) ; string-join
  (import srfi-69) ; hash-table
  (import listicles)
  (import fmt-better)
- (import loops)
+ (import simple-loops)
  (import sql-de-lite)
 ;  (import extras) ; sprintf
- (import data-structures) ; flatten
+ (import chicken.base) ; flatten
+ (import chicken.sort)
 
  (define (graph-who args db)
    (let ((people->interrupts (make-hash-table equal?))

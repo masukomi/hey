@@ -1,29 +1,73 @@
 (module listicles
   (
-   nth
-   range
-   split-by
-   list-includes
-   mflatten
-   pairs-list-to-hash
-   replace-nth
-   last-index
-   sort-strings>
-   sort-strings<
+   acons
+   assoc-set
+   alist-merge
+   all?
+   any?
    convert-rows-to-cols
+   first-where
+   insert-last
+   last-index
+   list-by-index
+   list-includes?
+   mflatten
+   nth
+   nth1
+   pairs-list-to-hash
+   range
+   replace-nth
+   sort-strings<
+   sort-strings>
+   split-by
   )
-  (import chicken)
+  ; (import chicken)
   (import scheme)
-  (import srfi-1)
+  (import srfi-1) ;define's first, last and list-index
   (import srfi-69)
-  (import extras)
-  (import data-structures)
-  (import loops)
-  ;TODO get rid of the do-list code so that we can jetison the 
+  (import chicken.sort)
+  (import chicken.format)
+  (import chicken.base)
+
+  ; (import extras)
+  ; (import data-structures)
+  (import simple-loops)
+  ;TODO get rid of the do-list code so that we can jetison the
   ; dependency on loops
-  
-  ; (doc-fun "nth" 
-  ;   "## Public: 
+
+
+  ; constructs a new association list by adding
+  ; the pair (key . datum) to the old a-list.
+  ; liberated from Common Lisp:
+  ; https://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node153.html
+  (define (acons key datum a-list)
+    ;; (cons (cons key datum) a-list)
+    (alist-cons key datum a-list))
+
+  ; replaces values in the second list
+  ; with the corresponding values in the first
+  (define (alist-merge list-a list-b)
+    ;cheat! convert them to hashes and merge those!
+    ;then convert it back to an alist
+    (hash-table->alist
+     (hash-table-merge
+      (pairs-list-to-hash list-a)
+      (pairs-list-to-hash list-b))))
+
+  ; returns a new list with the value of
+  ; key set to the new value
+  ; if there is more than one pair with
+  ; the same key the redundant ones will
+  ; be deleted.
+  (define (assoc-set a-list key value)
+    (alist-cons key value
+      (alist-delete key a-list)))
+
+
+
+
+  ; (doc-fun "nth"
+  ;   "## Public:
   ;   returns the \"nth\" item of a list
   ;
   ;   ### Parameters:
@@ -33,25 +77,82 @@
   ;   ### Returns:
   ;   The nth item of a list (if available)
   ;
+  ;   ### Exapmle:
+  ;   (nth 0 '(1 2 3)) ; => 1
+  ;
   ;   ### Exceptions:
-  ;   If n is outside of the bounds of the list then an 
-  ;   \"Index out of bounds\" error will be thrown")
+  ;   If n is outside of the bounds of the list then an
+  ;   Error: (list-tail) out of range
+  ;   will be thrown
+  ;   ")
   (define (nth n lst)
-    (if (or (> n (- (length lst) 1)) (< n 0))
-      (error 'nth "Index out of bounds.")
-      (if (eq? n 0)
-        (car lst)
-        (nth (- n 1) (cdr lst)))))
+    (list-ref lst n))
+
+  ; (doc-fun "nth1"
+  ;   "## Public:
+  ;   returns the \"nth\" item of a list
+  ;
+  ;   ### Parameters:
+  ;   * n - the 1 based index into the list
+  ;   * lst - the list you wish to receive the nth element from
+  ;
+  ;   ### Returns:
+  ;   The nth item of a list (if available) using normal numbering
+  ;
+  ;   ### Exapmle:
+  ;   (nth1 1 '(1 2 3)) ; => 1
+  ;
+  ;   ### Exceptions:
+  ;   If n is outside of the bounds of the list then an
+  ;   Error: (list-tail) out of range
+  ;   will be thrown
+  ;   ")
+  (define (nth1 n lst)
+    (list-ref lst (- n 1)))
+
+  (define (insert-last e lst)
+    (let helper ((lst lst))
+      (if (pair? lst)
+        (cons (car lst)
+              (helper (cdr lst)))
+        (cons e '()))))
 
   (define (last-index lst)
     (if (eq? (length lst) 0)
       0
-      (- (length lst) 1))
+      (- (length lst) 1)))
+
+  ; returns the first element where the test is true
+  ; or '()
+  (define (first-where lst test)
+    (if (eq? (length lst) 0)
+      '()
+      (if (test (car lst))
+        (car lst)
+        (first-where (cdr lst) test))))
+
+  (define (all? lst test)
+    ; if there's nothing left and it hasn't failed yet
+    (if (null? lst)
+        #t
+        (if (not (test (car lst)))
+            #f
+            (all? (cdr lst) test)
+            )
+
+        )
     )
 
+  ;(any? '("foo" "bar") (lambda(x)(equal? "bar" x)))
+  (define (any? lst test)
+    (if (eq? (length lst) 0)
+      #f
+      (if (not (test (car lst)))
+        (any? (cdr lst))
+        #t)))
 
   (define (replace-nth n replacement lst)
-    (cond 
+    (cond
       ((null? lst) '())
       ((eq? n 0) (cons replacement (replace-nth (- n 1) '() (cdr lst))))
       (else
@@ -76,7 +177,7 @@
   ;   ### Parameters:
   ;   * a - the starting number
   ;   * b - the maximum number
-  ;   * increment (optional) - the number that will be added at each step from 
+  ;   * increment (optional) - the number that will be added at each step from
   ;     a to b. Defaults to 1
   ;   * existing (optional) - a starting list to add to. Defaults to `'()`
   ;
@@ -98,7 +199,7 @@
       (cons a (range (+ increment a) b increment existing) )
       existing))
 
-  ; (doc-fun "split-by" 
+  ; (doc-fun "split-by"
   ; "## Public: split-by
   ; splits an list into multiple lists of n length (or smaller).
   ; ### Parameters:
@@ -130,9 +231,9 @@
 ; \#t or \#f indicating the presence of the item in the list.
 ;
 ; ### Example:
-; (list-includes '(1 2 3) 2) ;=> #t
-; (list-includes '(1 2 3) 4) ;=> #f
-  (define (list-includes a-list an-item)
+; (list-includes? '(1 2 3) 2) ;=> #t
+; (list-includes? '(1 2 3) 4) ;=> #f
+  (define (list-includes? a-list an-item)
     (let ((index (list-index (lambda(x)(equal? an-item x)) a-list)))
       (if (eq? index #f)
         #f #t)))
@@ -161,16 +262,22 @@
       (do-list row rows
         (extract-cols row cols-hash 0)
                )
-      (let ((indexes 
+      (let ((indexes
               (sort (hash-table-keys cols-hash) > )))
-          (do-list idx indexes 
-            (hash-table-set!  cols-hash idx (reverse 
+          (do-list idx indexes
+            (hash-table-set!  cols-hash idx (reverse
                                               (hash-table-ref cols-hash idx))))
           ; values are now straight lists not dotted pairs
           (reverse (map (lambda (idx2)(hash-table-ref cols-hash idx2)) indexes))
         )))
-  
 
+  (define (list-by-index a-list #!optional map idx)
+    (let ((idx (if idx idx 0))
+          (map (if map map '())))
+        (let ( ( new-map (cons (cons idx (car a-list)) map)) )
+          (if (= (length a-list) 1 )
+                  new-map
+                  (list-by-index (cdr a-list) new-map (+ 1 idx))))))
 
 
 ; INTERNAL METHODS
@@ -189,7 +296,7 @@
   ; used by convert-rows-to-cols
   (define (extract-cols row cols-hash idx)
     (if (not (null? row))
-      (begin 
+      (begin
         (hash-table-set! cols-hash idx
           (cons (car row) (hash-table-ref/default cols-hash idx '()) ))
         (extract-cols (cdr row) cols-hash (+ 1 idx)))))

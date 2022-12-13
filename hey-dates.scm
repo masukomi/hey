@@ -7,11 +7,13 @@
   subtract-days-from-epoch
   date->sqlite-string
   )
-  (import chicken)
+  (import chicken.base)
+  (import chicken.file.posix)
+  (import chicken.io)
+  (import chicken.time)
+  (import chicken.time.posix)
   (import scheme)
   (import srfi-19)
-  (import posix)
-  (import ports)
 
   ; (date->sqlite-string (date-at-midnight (subtract-days-from-epoch 1 (current-seconds)))
   ; now is (current-seconds)

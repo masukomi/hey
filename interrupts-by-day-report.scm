@@ -1,15 +1,12 @@
 (module interrupts-by-day-report (graph-interrupts-by-day)
- (import chicken)
  (import scheme)
  (import srfi-1)
  (import srfi-69)
 
  (import sql-de-lite)
- (import extras)
- (import loops)
+ (import simple-loops)
  (import listicles)
  (import uri-tools)
- (import data-structures)
 
  
 

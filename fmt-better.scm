@@ -3,13 +3,12 @@
   (
    fmt-rows
   )
-  (import chicken)
   (import scheme)
   (import fmt)
   (import listicles)
   (import srfi-13) ; string-join
-  ; (import extras) ; sprintf
-  (import data-structures) ; flatten
+  (import chicken.base)
+
 
   (define (fmt-rows rows divider)
     (let ((columns 

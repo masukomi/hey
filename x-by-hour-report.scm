@@ -1,18 +1,18 @@
 (module x-by-hour-report (graph-x-by-hour)
- (import chicken)
  (import scheme)
  (import srfi-1)
  (import srfi-69)
 
  (import sql-de-lite)
- (import extras)
- (import loops)
+ (import simple-loops)
  (import listicles)
  (import uri-tools)
  (import hey-dates)
- (import data-structures)
- (import files)
- (import posix)
+ (import chicken.file)
+ (import chicken.file.posix)
+ (import chicken.base)
+ (import chicken.format)
+ (import chicken.process)
 
 
  (define (graph-x-by-hour report-on args db)
@@ -59,7 +59,7 @@
         (with-output-to-file temp-file 
           (lambda ()
             (do-list hour-key (range 0 24)
-              (if (not (list-includes (hash-table-keys hours-hash) hour-key))
+              (if (not (list-includes? (hash-table-keys hours-hash) hour-key))
                 (print "0")
                 (print (sprintf "~A"  (hash-table-ref hours-hash hour-key)))
               )
@@ -103,7 +103,7 @@
          ; and the new entry
          (hash-table-set! row-hash "meta" x)
          (hash-table-set! row-hash "value" interrupts)
-         (if (not (list-includes (hash-table-keys x->hour->value) x))
+         (if (not (list-includes? (hash-table-keys x->hour->value) x))
           (hash-table-set! x->hour->value x (make-hash-table equal?)))
          (hash-table-set! (hash-table-ref x->hour->value x)
                           hour
@@ -113,7 +113,7 @@
       ; let's fill in the hours they don't have
       (do-list x (sort-strings< (hash-table-keys x->hour->value))
        (do-list hour (sort-strings< (hash-table-keys hours-hash))
-        (let ((value (if (list-includes
+        (let ((value (if (list-includes?
                           (hash-table-keys
                            (hash-table-ref x->hour->value x))
                           hour)
