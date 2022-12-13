@@ -12,3 +12,4 @@ scratchpad.scm
 hey*.tar.gz
 *.o
 *.link
+*.import.scm
