@@ -6,15 +6,15 @@
  (import chicken)
  (import scheme)
 
- (use posix)
- (use ports)
- (use extras)
- (use http-client)
- (use data-structures)
- (use listicles)
+ (import posix)
+ (import ports)
+ (import extras)
+ (import http-client)
+ (import data-structures)
+ (import listicles)
 
- (require-extension uri-common)
- (require-extension json)
+ (import uri-common)
+ (import json)
 
   ;; Perform a POST of the key "test" with value "value" to an echo service:
   ;; (with-input-from-request "http://localhost/echo-service"

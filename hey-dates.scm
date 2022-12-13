@@ -9,9 +9,9 @@
   )
   (import chicken)
   (import scheme)
-  (use srfi-19)
-  (use posix)
-  (use ports)
+  (import srfi-19)
+  (import posix)
+  (import ports)
 
   ; (date->sqlite-string (date-at-midnight (subtract-days-from-epoch 1 (current-seconds)))
   ; now is (current-seconds)

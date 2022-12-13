@@ -5,11 +5,11 @@
   )
   (import chicken)
   (import scheme)
-  (use fmt)
-  (use listicles)
-  (use srfi-13) ; string-join
-  ; (use extras) ; sprintf
-  (use data-structures) ; flatten
+  (import fmt)
+  (import listicles)
+  (import srfi-13) ; string-join
+  ; (import extras) ; sprintf
+  (import data-structures) ; flatten
 
   (define (fmt-rows rows divider)
     (let ((columns 

@@ -2,14 +2,14 @@
  (import chicken)
  (import scheme)
  (import srfi-1)
- (use srfi-13) ; string-join
+ (import srfi-13) ; string-join
  (import srfi-69) ; hash-table
- (use listicles)
- (use fmt-better)
- (use loops)
- (use sql-de-lite)
-;  (use extras) ; sprintf
- (use data-structures) ; flatten
+ (import listicles)
+ (import fmt-better)
+ (import loops)
+ (import sql-de-lite)
+;  (import extras) ; sprintf
+ (import data-structures) ; flatten
 
  (define (graph-who args db)
    (let ((people->interrupts (make-hash-table equal?))

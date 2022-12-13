@@ -16,9 +16,9 @@
   (import scheme)
   (import srfi-1)
   (import srfi-69)
-  (use extras)
-  (use data-structures)
-  (use loops)
+  (import extras)
+  (import data-structures)
+  (import loops)
   ;TODO get rid of the do-list code so that we can jetison the 
   ; dependency on loops
   

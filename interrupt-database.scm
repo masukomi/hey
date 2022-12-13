@@ -24,12 +24,12 @@
  (import scheme)
 
  (require-extension sql-de-lite)
- (use loops)
- (use srfi-1)
- (use srfi-13)
- (use listicles)
+ (import loops)
+ (import srfi-1)
+ (import srfi-13)
+ (import listicles)
 
-  (use extras)
+  (import extras)
  ;----------------------------------------------------------------------------
  ; core
  (define (load-db-at-path path)
