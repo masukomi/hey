@@ -2,7 +2,13 @@
 
 ----
 
-Please note: This codebase was a quick hack that got out of hand. Hey 2.0 is a complete rewrite in Crystal that supports user-created reports. You can [check it out here](https://github.com/masukomi/hey_2). 
+Please note: This codebase was a quick hack that got out of hand. I
+was also pretty new to Scheme at the time. It's been rewritten twice over the years. The current version is now in Raku and
+[can be found here](https://github.com/masukomi/hey_3). The latest
+version supports Time Tracking too. Not just Interruption Tracking.
+
+This has been updated to work with Chicken 5, but I'm not using this
+version anymore so I'm not guaranteeing anything ;) 
 
 ----
 
@@ -36,56 +42,18 @@ handle things.
 ## Instructions
 
 ### Installation
-#### Mac Users
-You can [download the latest version here.](https://interrupttracker.com/downloads/hey.dmg)
-Open that up and follow the instructions in the README.md
+You'll have to build from source. This requires
+[Chicken Scheme](https://www.call-cc.org/) to be installed.  
 
-Unfortunately, right now it requires that you have 
-[Chicken Scheme](https://www.call-cc.org/) installed.  There's a library file
-it's linking to that I haven't extracted into the build yet. Sorry.
 
 #### Building from source
-In this case there's no getting around the need for having 
-[Chicken Scheme](https://www.call-cc.org/) installed.
 
-Once you've done that building it is pretty easy
+1. Run `./install_chicken_eggs.sh` to install the libraries it uses.
+2. Run `./build.sh` to build the `hey` executable. 
+3. copy `default.db` to `~/.local/share/hey/hey.db`
 
-For linux:
-```
-./build.sh libraries
-./build.sh linux
-```
-
-The first command will create a `hey_libs` directory and install all the require
-"eggs" (third party libraries). You should only ever need to do that once. 
-The second command will build the modules and an executable, and place them in
-the `hey_libs` directory, then put together a cli tool called `hey` that will
-run the real `hey` executable from within that directory, because it needs to be
-run from within the same directory as its libraries.
-
-On macOS we get around this by bundling it all up in a `.app` folder and hiding
-the libs in there. But, we still need the helper cli script.
-
-To build the macOS .app version from scratch you'll need to have the 
-[appdmg npm tool](https://www.npmjs.com/package/appdmg) installed.
-
-Once you've got that just run
-
-```
-./build.sh libraries
-./build.sh mac
-
-#### Geeks on other platforms
-Hey is written in [Chicken Scheme](https://www.call-cc.org/), 
-which generates standard C files. As a
-result, you should be able to compile it on most systems. Once you've 
-cloned the repo and installed Chicken Scheme, try running the `build.sh` and 
-tell it you want to install `libraries`
-
-After that... Well, I'm happy to help but I only use macOS. 
-
-#### Everyone Else
-Sorry. :(
+You can use a different location by specifying the HEY_DB
+environment variable, or tweaking the config. See Testing below.
 
 ### Usage
 
@@ -229,7 +197,7 @@ range.
 `hey` looks for a json file at `~/.config/hey/config.json`
 
 To have `hey` use a different database location set the value of `HEY_DB` to be
-the path to your SQLite file.
+the path to your SQLite file. 
 
 For example:
 
