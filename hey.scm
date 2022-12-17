@@ -1,10 +1,10 @@
 ; Welcome to Hey!
 ; this started out as a quick hack, and just kept growing
 ; as a result, it could use some SERIOUS refactoring at this point.
-; Just, general cleanup, breaking functions down into smaller pieces, 
+; Just, general cleanup, breaking functions down into smaller pieces,
 ; moving functions out into separate files, and stuff like that.
 ;
-; If you're looking for something more specific to work on 
+; If you're looking for something more specific to work on
 ; check out the Issues Tracker: https://github.com/masukomi/hey/issues
 ; and drop me a line on Twitter. I'm @masukomi
 ; Se vi parolas esperanton mi estas @praktiku sur la Twitter.
@@ -37,7 +37,7 @@
 
 
 (define (create-entry people-and-tags db)
- 
+
   (let ((people-and-tags-lists (separate-people-from-tags people-and-tags)))
     (let (
           (people (first people-and-tags-lists))
@@ -63,7 +63,7 @@
      (if (and (not (equal? "+" name))
               (not includes-tags))
       ; this is a name
-      (begin 
+      (begin
        (set! people (cons name people)))
       ; this is a tag or the indication of future tags
       (if (not (equal? "+" name))
@@ -82,7 +82,7 @@
  (let ((env-db (get-environment-variable "HEY_DB")))
   (if (or (not env-db)
           (equal? "" env-db))
-   (pathname-expand "~/Dropbox/apps/hey/database/hey.db")
+   (pathname-expand "~/.local/share/hey/hey.db")
    (pathname-expand env-db))))
 
 (define (find-or-create-tag name db)
@@ -214,7 +214,7 @@
    eid)))
 
 (define (graph args)
- (let ((known-report-types (list "people-by-hour" 
+ (let ((known-report-types (list "people-by-hour"
  								 "tags-by-hour"
  								 "interrupts-by-day"
  								 "interrupts-fgp")))
@@ -249,10 +249,10 @@
   "Usage instructions are at https://interrupttracker.com/usage.html
 General info is available at https://interrupttracker.com/
 
-Available commands: 
+Available commands:
 * hey
   * lists recent events
-* hey <name> 
+* hey <name>
   * creates an event associated with <name>
 * hey <name> + <space separated tags>
   * creates an event associated with <name> and the specified tags
@@ -287,7 +287,7 @@ I'm @masukomi on Twitter and happy to help there."))
    (let ((row-data '())
          (db (open-db)))
     (print (sprintf "Last ~A interruptions in chronological order...\n" num-events))
-    (do-list row (query fetch-rows (sql db 
+    (do-list row (query fetch-rows (sql db
       "SELECT e.id, datetime(e.created_at, 'localtime') FROM events e order by e.created_at desc limit ?;")
                         num-events)
      (set! row-data (cons (get-event-display-data row db) row-data)))
@@ -318,7 +318,7 @@ I'm @masukomi on Twitter and happy to help there."))
 (define (process-command command args)
  ; sometimes there's nothing passed after the command
  ; in which case args is a string not a list
- ; but some commands work with and without params... 
+ ; but some commands work with and without params...
  ; so we need to make sure it's always a list
  (let ((args (if (not (string? args))
               args
