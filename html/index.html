@@ -28,22 +28,22 @@
 Interested in tracking just how many times you're interrupted and by who?
     </p>
 
-    <p>Well hey, maybe <span class="LemonYellowSun">Hey!</span> is the tool for 
+    <p>Well hey, maybe <span class="LemonYellowSun">Hey!</span> is the tool for
     you.</p>
 
     <p>When someone walks up to you and starts talking, breaks your concentration with
 yet another slack message, or diety forbid, actually calls your phone...just
 type <code>hey &lt;person's name&gt;</code> on the command line.
-	</p>
+  </p>
 
-	<p>That's it. An entry in a local db will be created for the event, who did
-	it, and when it happened.</p>
+  <p>That's it. An entry in a local db will be created for the event, who did
+  it, and when it happened.</p>
 
-    <p>Want to start tracking _why_ people are interrupting you? After the interruption 
-you can, optionally, list and tag the events, leave a note, 
+    <p>Want to start tracking _why_ people are interrupting you? After the interruption
+you can, optionally, list and tag the events, leave a note,
 or generate reports graphing all your past interruptions.</p>
 
-    <p>Track it for long enough and patterns are sure to emerge. Maybe you'll find 
+    <p>Track it for long enough and patterns are sure to emerge. Maybe you'll find
 that a little documentation could save you hours a week. Maybe you'll find that
 one person that's devouring more time than anyone else and discuss a better way to
 handle things.</p>
@@ -52,32 +52,33 @@ handle things.</p>
     <p>So far, we've got 2 reports, with more on the way:</p>
     <p>First, a stacked bar chart showing interruptions, by person,
     by hour since yesterday at midnight. You can check out an example of it
-    <a href="stacked_bar_chart.html">here</a>. 
+    <a href="stacked_bar_chart.html">here</a>.
     </p>
-    <p>To invoke it just type 
+    <p>To invoke it just type
     <code>hey graph people-by-hour</code></p>
     <p>Second, we've got the old school command line report that looks like
     this:
-    <br /><code>Recent interrupts: Chronological order
-Starting at midnight yesterday. 
+    <br />
+    <pre><code>Recent interrupts: Chronological order
+Starting at midnight yesterday.
 
 ID | Who       | When                 | Tags
 2. | Bob, Mary | 4/12/17 14:23        | meeting, scheduled
 3. | Bob       | 4/12/17 14:26        |
-4. | Sam       | 4/12/17 16:11        | question 
+4. | Sam       | 4/12/17 16:11        | question
 5. | Mary      | 4/12/18 09:22        | task list
-</code></p>
+    </code></pre></p>
     <p>To invoke that just type <code>hey graph</code></p>
 
     <h2>Questions</h2>
     <h3>How do I use it?</h3>
-    <p>That's detailed on the 
+    <p>That's detailed on the
     <a href="https://interrupttracker.com/usage.html">usage</a> page</p>
     <h3>How Much?</h3>
     <p>It's free!</p>
 
     <h3 class="LemonYellowSun">Why not a GUI app?</h3>
-    <p>Actually, I've got one all sketched out. I even paid someone else to 
+    <p>Actually, I've got one all sketched out. I even paid someone else to
     write it, but they turned out to be incompetent and never gave me any
     working code despite going over budget.</p>
     <p>So, I'll get there eventually, but in the meantime I needed to throw
@@ -90,17 +91,17 @@ ID | Who       | When                 | Tags
 
     <h2>Installation</h2>
     <h3>Mac Users</h3>
-    <p>You can <a href="https://interrupttracker.com/downloads/hey.dmg">download 
+    <p>You can <a href="https://interrupttracker.com/downloads/hey.dmg">download
     the latest version here.</a>
     <br />Open that up and follow the instructions in the README.md
     <br /><b><span class="LemonYellowSun">NOTE: it appears you must have  <a
-    		 href="https://www.call-cc.org/">Chicken Scheme</a>
-    		installed.</span> My apologies for this. I'm trying to work around
-    	it. Geeks can install it with <code>brew install chicken</code></b>
+         href="https://www.call-cc.org/">Chicken Scheme</a>
+        installed.</span> My apologies for this. I'm trying to work around
+      it. Geeks can install it with <code>brew install chicken</code></b>
     </p>
 
     <h3>Geeks On Other Platforms</h3>
-    <p>Hey is written in <a href="https://www.call-cc.org/">Chicken Scheme</a>, 
+    <p>Hey is written in <a href="https://www.call-cc.org/">Chicken Scheme</a>,
     which generates standard C files. As a
     result, you should be able to compile it on most systems. Once you've got
     Chicken Scheme installed, try running the </p>
@@ -111,14 +112,13 @@ ID | Who       | When                 | Tags
     who likes Scheme and convince them to contribute.</p>
 
     <h2 class="LemonYellowSun">Source Code</h2>
-    <p><span class="LemonYellowSun">Hey!</span> is an open source app written in 
+    <p><span class="LemonYellowSun">Hey!</span> is an open source app written in
     Chicken Scheme. You can <a href="https://github.com/masukomi/hey">find the
       source code on GitHub</a>. Pull requests are happily accepted. </p>
     </div>
 
     <div id="footer">
-      <a href="htts://interrupttracker.com/">Hey</a> is copyright © 2017 Kay Rhodes. 
+      <a href="htts://interrupttracker.com/">Hey</a> is copyright &copy; 2017 Kay Rhodes.
     </div>
   </body>
 </html>
-
